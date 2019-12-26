@@ -11,7 +11,8 @@ using namespace std;
 
 // struct buku
 struct Book {
-    string id, judul, pengarang, penerbit, stock;
+    string id, judul, pengarang, penerbit;
+    int stock;
 };
 
 // Fungsi untuk menampilkan buku dari databse
@@ -183,7 +184,7 @@ void tampilBuku(){
             getline(ss, readBook.judul, ',');
             getline(ss, readBook.pengarang, ',');
             getline(ss, readBook.penerbit, ',');
-            getline(ss, readBook.stock);
+            getline(ss, stock);
 
             Sleep(500);
             if(line != "") {
@@ -191,7 +192,7 @@ void tampilBuku(){
                      << "| Judul Bukut\t: " << readBook.judul << endl
                      << "| Pengarang\t: " << readBook.pengarang << endl
                      << "| Penerbit\t: " << readBook.penerbit << endl
-                     << "| Stock Buku\t: " << readBook.stock << endl;
+                     << "| Stock Buku\t: " << stock << endl;
                 cout << "+=======================================================================+\n";
             } 
         }
@@ -280,7 +281,7 @@ void cariBuku(){
                 getline(ssline, findBook.judul, ',');
                 getline(ssline, findBook.pengarang, ',');
                 getline(ssline, findBook.penerbit, ',');
-                getline(ssline, findBook.stock);
+                getline(ssline, stock);
 
                 string tmp;
                 
@@ -297,7 +298,7 @@ void cariBuku(){
                                  << "| Judul Bukut\t: " << findBook.judul << endl
                                  << "| Pengarang\t: " << findBook.pengarang << endl
                                  << "| Penerbit\t: " << findBook.penerbit << endl
-                                 << "| Stock Buku\t: " << findBook.stock << endl;
+                                 << "| Stock Buku\t: " << stock << endl;
                             cout << "+=======================================================================+\n";
                             countCari = 1;
                             break;
@@ -356,7 +357,7 @@ void editBuku(){
                 getline(ssline, editBook.judul, ',');
                 getline(ssline, editBook.pengarang, ',');
                 getline(ssline, editBook.penerbit, ',');
-                getline(ssline, editBook.stock);
+                getline(ssline, stock);
 
                 if(idBuku == editBook.id) {
                     cout << "\n  Pilih data yang akan diedit\n"
@@ -384,7 +385,7 @@ void editBuku(){
                                     << editBook.judul << ","
                                     << editBook.pengarang << ","
                                     << editBook.penerbit << ","
-                                    << editBook.stock << "\n";
+                                    << stock << "\n";
 
                         } else {
 
@@ -394,21 +395,21 @@ void editBuku(){
                                             << newVal << ","
                                             << editBook.pengarang << ","
                                             << editBook.penerbit << ","
-                                            << editBook.stock << "\n";
+                                            << stock << "\n";
                                     break;
                                 case 2:
                                     newData << editBook.id << ","
                                             << editBook.judul << ","
                                             << newVal << ","
                                             << editBook.penerbit << ","
-                                            << editBook.stock << "\n";
+                                            << stock << "\n";
                                     break;
                                 case 3:
                                     newData << editBook.id << ","
                                             << editBook.judul << ","
                                             << editBook.pengarang << ","
                                             << newVal << ","
-                                            << editBook.stock << "\n";
+                                            << stock << "\n";
                                     break;
                                 case 4:
                                     newData << editBook.id << ","
@@ -480,7 +481,7 @@ void hapusBuku(){
                 getline(ssline, delBook.judul, ',');
                 getline(ssline, delBook.pengarang, ',');
                 getline(ssline, delBook.penerbit, ',');
-                getline(ssline, delBook.stock);
+                getline(ssline, stock);
 
                 string tmp;
                 
@@ -493,7 +494,7 @@ void hapusBuku(){
                                     << delBook.judul << ","
                                     << delBook.pengarang << ","
                                     << delBook.penerbit << ","
-                                    << delBook.stock << "\n";
+                                    << stock << "\n";
                         } else {
                             countDel = 1;
                         }
