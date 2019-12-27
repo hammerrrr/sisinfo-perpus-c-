@@ -4,7 +4,7 @@
  ### Code by team.
  
  # Fitur Program
- ## 1. Menampilkan data buku dan peminjam
- ## 2. Pencarian Data
- ## 3. Peminjaman Buku
- ## 4. Tambah, Edit, dan Hapus data pada halaman Admin
+ ### 1. Menampilkan data buku dan peminjam
+ ### 2. Pencarian Data
+ ### 3. Peminjaman Buku
+ ### 4. Tambah, Edit, dan Hapus data pada halaman Admin
