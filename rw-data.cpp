@@ -54,21 +54,26 @@ void read_data() {
 
     if(!data.is_open()) cout << "data tidak ada\n";
 
-    string id, judul, pengarang, penerbit, stock;
+    string id, judul, pengarang, penerbit, stock, line;
     int count = 0;
     while(data.good()) {
-        getline(data, id, ',');
-        getline(data, judul, ',');
-        getline(data, pengarang, ',');
-        getline(data, penerbit, ',');
-        getline(data, stock, '\n');
+        getline(data, line);
 
-        cout << "ID Buku\t\t: " << id << endl
-             << "Judul\t\t: " << judul << endl
-             << "Pengarang\t: " << pengarang << endl
-             << "Penerbit\t: " << penerbit << endl
-             << "Stock\t\t: " << stock << endl
-             << "==========================" << endl;
+        stringstream ss(line);
+        getline(ss, id, ',');
+        getline(ss, judul, ',');
+        getline(ss, pengarang, ',');
+        getline(ss, penerbit, ',');
+        getline(ss, stock);
+
+        cout << id << endl;
+
+        // cout << "ID Buku\t\t: " << id << endl
+        //      << "Judul\t\t: " << judul << endl
+        //      << "Pengarang\t: " << pengarang << endl
+        //      << "Penerbit\t: " << penerbit << endl
+        //      << "Stock\t\t: " << stock << endl
+        //      << "==========================" << endl;
         count++;
     }
 
@@ -115,6 +120,7 @@ void write_data() {
 }
 
 int main() {
+
    
     cout << "Menu: " << endl
          << "1. Read Data" << endl
