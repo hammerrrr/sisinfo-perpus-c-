@@ -48,7 +48,7 @@ void pinjamBuku();
 
 void kembalikanBuku();
 
-bool loopInput(char &opt);
+bool loopInput(string &opt);
 
 // fungsi untuk mengubah string ke lowercase
 string toLower(string data) {
@@ -81,7 +81,7 @@ string genTime() {
 
 int main() {
     bool status = true;
-    char opt;
+    string opt;
 
     while(status) {
         home();
@@ -158,8 +158,9 @@ fstream connectDB(string DB) {
     return data;
 }
 
-bool loopInput(char &opt) {
-    if((opt == 'n') || (opt == 'N')) return false;
+bool loopInput(string &opt) {
+    if((opt == "n") || (opt == "N")) return false;
+    else if((opt == "y") || (opt == "Y")) return true;
 }
 
 int getDBSize(string DBName){
@@ -223,11 +224,11 @@ void tampilBuku(){
             Sleep(500);
             if(line != "") {
                 cout << "+=======================================================================+\n";
-                cout << "| ID Buku\t: " << readBook.id << endl
-                     << "| Judul Buku\t: " << readBook.judul << endl
-                     << "| Pengarang\t: " << readBook.pengarang << endl
-                     << "| Penerbit\t: " << readBook.penerbit << endl
-                     << "| Stock Buku\t: " << stock << endl;
+                cout << "| ID Buku      : " << readBook.id << endl
+                     << "| Judul Buku   : " << readBook.judul << endl
+                     << "| Pengarang    : " << readBook.pengarang << endl
+                     << "| Penerbit     : " << readBook.penerbit << endl
+                     << "| Stock Buku   : " << stock << endl;
             }
         }
         Sleep(500);
@@ -238,7 +239,7 @@ void tampilBuku(){
 };
 void tambahBuku(){
     bool status = true;
-    char opt;
+    string opt;
 
     while(status) {
         cout << "\n  Tambah Buku  \n";
@@ -288,7 +289,7 @@ void tambahBuku(){
 };
 void cariBuku(){
     bool status = true;
-    char opt;
+    string opt;
 
     while(status) {
         cin.ignore();
@@ -361,7 +362,7 @@ void editBuku(){
 
     cin.ignore();
     bool status = true;
-    char opt;
+    string opt;
 
     while(status) {
         system("cls");
@@ -495,7 +496,7 @@ void hapusBuku(){
 
     cin.ignore();
     bool status = true;
-    char opt;
+    string opt;
 
     while(status) {
         system("cls");
@@ -606,13 +607,13 @@ void tampilPeminjam(){
             if(line != "") {
                 
                 cout << "+=======================================================================+\n";
-                cout << "| NIM\t\t\t: " << readPeminjam.nim << endl
-                     << "| Nama Mhs\t\t: " << readPeminjam.nama << endl
-                     << "| ID Buku\t\t: " << readPeminjam.buku.id << endl
-                     << "| Judul Buku\t\t: " << readPeminjam.buku.judul << endl
-                     << "| Status\t\t: " << readPeminjam.status << endl
-                     << "| Tanggal Pinjam\t: " << readPeminjam.borrow_at << endl
-                     << "| Tanggal Kembali\t: " << readPeminjam.return_at << endl;
+                cout << "| NIM              : " << readPeminjam.nim << endl
+                     << "| Nama Mhs         : " << readPeminjam.nama << endl
+                     << "| ID Buku          : " << readPeminjam.buku.id << endl
+                     << "| Judul Buku       : " << readPeminjam.buku.judul << endl
+                     << "| Status           : " << readPeminjam.status << endl
+                     << "| Tanggal Pinjam   : " << readPeminjam.borrow_at << endl
+                     << "| Tanggal Kembali  : " << readPeminjam.return_at << endl;
             }
         }
         
@@ -625,7 +626,7 @@ void tampilPeminjam(){
 };
 void admin(){
     bool status = true;
-    char opt;
+    string opt;
     string option;
 
     while(status) {
@@ -677,7 +678,7 @@ void admin(){
 };
 void authAdmin(){
     bool status = true;
-    char opt;
+    string opt;
 
     while(status) {
         string username, password;
@@ -706,7 +707,7 @@ void authAdmin(){
 };
 void pinjamBuku(){
     bool status = true;
-    char opt;
+    string opt;
 
     while(status) {
         system("cls");
@@ -836,7 +837,7 @@ void pinjamBuku(){
 
 void kembalikanBuku(){
     bool status = true;
-    char opt;
+    string opt;
 
     while(status) {
         system("cls");

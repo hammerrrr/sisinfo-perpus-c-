@@ -1,21 +1,21 @@
 #include <iostream>
-#include <string>
-#include <random>
+#include <chrono>
+#include <ctime>
 
 using namespace std;
 
-string genstr(size_t length) {
-     auto randChar = []() -> char {
-    };
-    const char charset[] = 
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const int max_index = (sizeof(charset) - 1);
-    
-    return charset[rand() % max_index];
 
-}
 
 int main() {
-   
-    cout << genstr(4);
+    auto start = chrono::system_clock::now();
+    time_t end_time = chrono::system_clock::to_time_t(start);
+    
+    char * tc = ctime(&end_time);
+    string str = string {tc};
+
+    str.pop_back();
+    cout << str;
+    
+    cout << "tes";
+    //cout << genstr(4);
 }
