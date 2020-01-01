@@ -5,6 +5,7 @@
 #include <windows.h>
 #include <chrono>
 #include <ctime>
+#include <conio.h>
 
 using namespace std;
 
@@ -18,6 +19,19 @@ struct Pinjam {
     struct Book buku;
     string nim, nama, status, borrow_at, return_at;
 };
+
+void textcolor (int color) {
+    static int __BACKGROUND;
+
+    HANDLE h = GetStdHandle ( STD_OUTPUT_HANDLE );
+    CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
+
+
+    GetConsoleScreenBufferInfo(h, &csbiInfo);
+
+    SetConsoleTextAttribute (GetStdHandle (STD_OUTPUT_HANDLE),
+                             color + (__BACKGROUND << 4));
+}
 
 // Fungsi untuk menampilkan buku dari databse
 void tampilBuku();
@@ -114,7 +128,9 @@ void home(){
 
     reOption:
     cout << "  Masukkan Pilihan: ";
+    textcolor(2);
     cin >> opt;
+    textcolor(15);
 
     // while(cin.fail()) {
     //     cin.clear();
@@ -138,7 +154,9 @@ void home(){
     }else if(opt == "7"){
         exit(0);
     }else{
-        cout <<  "  Pilihan tidak valid, silahkan masukkan lagi\n\n";
+        textcolor(14);
+        cout <<  "  ->  Pilihan tidak valid, silahkan masukkan lagi\n\n";
+        textcolor(15);
         Sleep(500);
         goto reOption;
     }
@@ -200,8 +218,13 @@ void tampilBuku(){
 
 
     if(isEmptyData == 0) {
-       cout << "| Tidak Ada Buku \t\t\t\t\t\t\t|\n"
-            << "+=======================================================================+\n";
+        cout << "| ";
+        textcolor(14); 
+        cout << "Tidak Ada Buku \t\t\t\t\t\t\t";
+        cout << "|\n";
+
+        textcolor(15);
+        cout << "+=======================================================================+\n";
     } else {
 
         string stock;
@@ -242,34 +265,60 @@ void tambahBuku(){
     string opt;
 
     while(status) {
-        cout << "\n  Tambah Buku  \n";
+        system("cls");
+
+        cout << "+=======================================================================+\n"
+             << "|                              TAMBAH BUKU                              |\n"
+             << "+=======================================================================+\n";
 
         fstream data = connectDB("buku.csv");
 
         Book addBook;
         int jumlah, countAdd = 0;
 
-        cout << "  Masukkan Jumlah Buku: ";
-
+        cout << "|  Masukkan Jumlah Buku: ";
+        textcolor(2);
         cin >> jumlah;
+        textcolor(15);
+        cout << "+=======================================================================+\n";
+
 
         string line, tmpid, stock;
+
+        
 
         for(int i = 0; i < jumlah; i++) {
 
             reID:
-            cout << "\n  Masukkan ID Buku\t: ";
+            cout << "|  Masukkan ID Buku\t: ";
+            textcolor(2);
             cin >> addBook.id;
+            textcolor(15);
+
             cin.ignore();
 
-            cout << "  Masukkan Judul Buku\t: ";
+            cout << "|  Masukkan Judul Buku\t: ";
+            textcolor(2);
             getline(cin, addBook.judul);
-            cout << "  Masukkan Pengarang\t: ";
+            textcolor(15);
+
+            cout << "|  Masukkan Pengarang\t: ";
+            textcolor(2);
             getline(cin, addBook.pengarang);
-            cout << "  Masukkan Penerbit\t: ";
+            textcolor(15);
+
+            cout << "|  Masukkan Penerbit\t: ";
+            textcolor(2);
             getline(cin, addBook.penerbit);
-            cout << "  Masukkan Stock Buku\t: ";
+            textcolor(15);
+
+            cout << "|  Masukkan Stock Buku\t: ";
+            textcolor(2);
             cin >> addBook.stock;
+            textcolor(15);
+
+            cout << "+=======================================================================+\n";
+
 
             data << addBook.id << ","
                  << addBook.judul << ","
@@ -281,7 +330,10 @@ void tambahBuku(){
         data.close();
 
         cout << "  Ingin melanjutkan tambah data? [y/n]: ";
+
+        textcolor(2);
         cin >> opt;
+        textcolor(15);
 
         status = loopInput(opt);
     }
@@ -305,7 +357,11 @@ void cariBuku(){
             int countCari = 0;
 
             cout << "|  Masukkan kata Kunci: ";
+
+            textcolor(2);
             getline(cin, cari);
+            textcolor(15);
+
             cout << "+=======================================================================+\n";
 
             Book findBook;
@@ -346,19 +402,29 @@ void cariBuku(){
 
             }
 
-            if((countCari == 0)) cout << "\n  Data dengan Keyword " << "\"" << cari << "\"" << " tidak ditemukan \n\n";
+            if((countCari == 0)) {
+                cout << "\n  Data dengan Keyword "; 
+
+                textcolor(3);
+                cout << "\"" << cari << "\"";
+                textcolor(15);
+
+                cout << " tidak ditemukan \n\n";
+            }
 
 
         data.close();
 
         cout << "  Ingin melanjutkan pencarian? [y/n]: ";
+
+        textcolor(2);
         cin >> opt;
+        textcolor(15);
 
         status = loopInput(opt);
     }
 }
 void editBuku(){
-    cout << "  Halaman Edit Buku\n";
 
     cin.ignore();
     bool status = true;
@@ -378,10 +444,12 @@ void editBuku(){
             int countEdit = 0, element;
 
             cout << "|  Masukkan ID Buku: ";
+
+            textcolor(2);
             cin >> idBuku;
+            textcolor(15);
+
             cout << "+=======================================================================+\n";
-
-
 
             Book editBook;
 
@@ -405,15 +473,24 @@ void editBuku(){
                          << "| Stock Buku\t: " << stock << endl;
                     cout << "+=======================================================================+\n";
 
-                    cout << "\n  Pilih data yang akan diedit\n"
-                         << "  1. Judul, 2. Pengarang, 3. Penerbit, 4. Stock: ";
+                    cout << "\n  Pilih data yang akan diedit: \n";
+
+                    textcolor(3);
+                    cout << "  1. Judul, 2. Pengarang, 3. Penerbit, 4. Stock: ";
+                    textcolor(15);
+
+                    textcolor(2);
                     cin >> element;
+                    textcolor(15);
 
                     cin.ignore();
 
                     cout << "\n  Masukkan Data Baru: ";
+
+                    textcolor(2);
                     getline(cin, newVal);
-                    countEdit = 1;
+                    textcolor(15);
+
                 }
 
                 string tmp;
@@ -433,6 +510,8 @@ void editBuku(){
                                     << stock << "\n";
 
                         } else {
+
+                            countEdit = 1;
 
                             switch(element){
                                 case 1:
@@ -472,9 +551,21 @@ void editBuku(){
             }
 
             if((countEdit == 1)) {
-                cout << "\n  Data pada Buku dengan ID: " << "\"" << idBuku << "\"" << " telah diubah \n\n";
+                cout << "\n  Data pada Buku dengan ID: ";
+
+                textcolor(3);
+                cout << "\"" << idBuku << "\"";
+                textcolor(15);
+
+                cout << " telah diubah \n\n";
             } else {
-                cout << "\n  Buku dengan ID: " << "\"" << idBuku << "\"" << " tidak ditemukan \n\n";
+                cout << "\n  Buku dengan ID: ";
+
+                textcolor(3);
+                cout << "\"" << idBuku << "\"";
+                textcolor(15);
+
+                cout << " tidak ditemukan \n\n";
             }
 
 
@@ -485,14 +576,17 @@ void editBuku(){
         rename("database/newBuku.csv", "database/buku.csv");
 
         cout << "  Ingin melanjutkan pengeditan data? [y/n]: ";
+
+        textcolor(2);
         cin >> opt;
+        textcolor(15);
+
         cin.ignore();
 
         status = loopInput(opt);
     }
 };
 void hapusBuku(){
-    cout << "  Halaman Hapus Buku\n";
 
     cin.ignore();
     bool status = true;
@@ -501,7 +595,7 @@ void hapusBuku(){
     while(status) {
         system("cls");
 
-        fstream data = connectDB("buku.csv");
+        fstream data    = connectDB("buku.csv");
         fstream newData = connectDB("newBuku.csv");
 
         cout << "+=======================================================================+\n"
@@ -512,7 +606,11 @@ void hapusBuku(){
             int countDel = 0;
 
             cout << "|  Masukkan ID Buku: ";
+
+            textcolor(2);
             cin >> idBuku;
+            textcolor(15);
+
             cout << "+=======================================================================+\n";
 
             Book delBook;
@@ -549,9 +647,21 @@ void hapusBuku(){
             }
 
             if((countDel == 1)) {
-                cout << "\n  Buku dengan ID: " << "\"" << idBuku << "\"" << " telah dihapus \n\n";
+                cout << "\n  Buku dengan ID: ";
+
+                textcolor(3);
+                cout << "\"" << idBuku << "\""; 
+                textcolor(15);
+
+                cout << " telah dihapus \n\n";
             } else {
-                cout << "\n  Buku dengan ID: " << "\"" << idBuku << "\"" << " tidak ditemukan \n\n";
+                cout << "\n  Buku dengan ID: ";
+
+                textcolor(3);
+                cout << "\"" << idBuku << "\"";
+                textcolor(15);
+
+                cout << " tidak ditemukan \n\n";
             }
 
 
@@ -581,7 +691,13 @@ void tampilPeminjam(){
 
 
     if(isEmptyData == 0) {
-       cout << "| Tidak Ada Data Peminjam \t\t\t\t\t\t|\n"
+       cout << "| ";
+
+       textcolor(14);
+       cout << " Tidak Ada Data Peminjam ";
+       textcolor(15);
+
+       cout << "\t\t\t\t\t\t|\n"
             << "+=======================================================================+\n";
     } else {
 
@@ -643,7 +759,10 @@ void admin(){
 
         reOption:
         cout << "  Masukkan Pilihan: ";
+
+        textcolor(2);
         cin >> option;
+        textcolor(15);
 
         // while(cin.fail()) {
         //     cin.clear();
@@ -661,17 +780,27 @@ void admin(){
         }else if(option == "4") {
             hapusBuku();
         }else if(option == "5") {
+            textcolor(14);
             cout << "\n  Anda telah keluar..\n";
+            textcolor(15);
+
             Sleep(1000);
             home();
         }else {
+
+            textcolor(14);
             cout <<  "Pilihan tidak valid, silahkan masukkan lagi\n";
+            textcolor(15);
+
             Sleep(500);
             goto reOption;
         }
 
         cout << "  Apakah ingin melanjutkan ke menu Admin? [y/n]: ";
+
+        textcolor(2);
         cin >> opt;
+        textcolor(15);
 
         status = loopInput(opt);
     }
@@ -686,21 +815,31 @@ void authAdmin(){
         cout << "\n  Login Administrator \n";
         relogin:
         cout << "  Masukkan Username: ";
+        textcolor(2);
         cin >> username;
+        textcolor(15);
+
         cout << "  Masukkan Passowrd: ";
+        textcolor(2);
         cin >> password;
+        textcolor(15);
 
         if((username == "admin") && (password == "admin")) {
             Sleep(1000);
             admin();
         } else {
             Sleep(1000);
-            cout << "  Username atau Password salah! Silahkan cek ulang\n";
+            textcolor(4);
+            cout << "  Username atau Password salah! Silahkan cek ulang\n\n";
+            textcolor(15);
             goto relogin;
         }
 
+        textcolor(14);
         cout << "  Anda telah keluar, Apakah ingin login kembali? [y/n]: ";
+        textcolor(2);
         cin >> opt;
+        textcolor(15);
 
         status = loopInput(opt);
     }
@@ -729,7 +868,9 @@ void pinjamBuku(){
         
         reinputNim:
         cout << "|  Masukkan NIM\t\t: ";
+        textcolor(2);
         cin >> nim;
+        textcolor(15);
         cout << "+=======================================================================+\n";
 
         while(dataMhs.good()) {
@@ -746,7 +887,9 @@ void pinjamBuku(){
                     isNIM = 1;
                     
                     cout << "|  Masukkan ID Buku\t: ";
+                    textcolor(2);
                     cin >> idBuku;
+                    textcolor(15);
                     cout << "+=======================================================================+\n";
 
                     while(buku.good()) {
@@ -806,17 +949,30 @@ void pinjamBuku(){
 
         
         if(isNIM == 0){
+                textcolor(14);
                 cout << "\n  Mahasiswa tidak ditemukan \n";
+                textcolor(15);
                 newBuku.close();
                 remove("newBuku.csv");
         } else {
             if(isBuku == 0) {
-                    cout << "\n  Buku yang dipinjam tidak ditemukan \n";
+                textcolor(14);
+                cout << "\n  Buku yang dipinjam tidak ditemukan \n";
+                textcolor(15);
             } else {
                 if(isStock == 0)  {
+                    textcolor(14);
                     cout << "\n  Stock 0, Buku tidak bisa dipinjam\n";
+                    textcolor(15);
                 } else {
-                        cout << "\n  Buku " << judulBuku << " berhasil dipinjam \n";
+                        cout << "\n  Buku ";
+
+                        textcolor(3);
+                        cout << judulBuku;
+                        textcolor(15);
+
+                        cout << " berhasil dipinjam \n";
+
                         newBuku.close();
                         buku.close();
 
@@ -828,7 +984,10 @@ void pinjamBuku(){
         
 
         cout << "\n  Apakah Ingin melanjutkan peminjaman? [y/n]: ";
+
+        textcolor(2);
         cin >> opt;
+        textcolor(15);
 
         status = loopInput(opt);
 
@@ -859,7 +1018,11 @@ void kembalikanBuku(){
         
         reinputNim:
         cout << "|  Masukkan NIM\t\t: ";
+
+        textcolor(2);
         cin >> nim;
+        textcolor(15);
+
         cout << "+=======================================================================+\n";        
 
         while(peminjam.good()) {
@@ -885,7 +1048,11 @@ void kembalikanBuku(){
                     cout << "+=======================================================================+\n";
                     
                     cout << "|  Masukkan ID Buku\t: ";
+
+                    textcolor(2);
                     cin >> idBuku;
+                    textcolor(15);
+
                     cout << "+=======================================================================+\n";
 
 
@@ -963,13 +1130,20 @@ void kembalikanBuku(){
             } 
         }
 
-            
         newBuku.close();
         peminjam.close();
         newPeminjam.close();
         buku.close();
 
-        if(isBuku == 1) cout << "\n  Buku " << judulBuku << " berhasil dikembalikan.\n";
+        if(isBuku == 1) {
+            cout << "\n  Buku ";
+
+            textcolor(3);
+            cout << judulBuku;
+            textcolor(15);
+
+            cout << " berhasil dikembalikan.\n";
+        }
         if(isNIM == 1) {
             remove("database/buku.csv");
             rename("database/newBuku.csv", "database/buku.csv");
@@ -979,12 +1153,18 @@ void kembalikanBuku(){
         } else {
             remove("database/newBuku.csv");
             remove("database/newPeminjam.csv");
+
+            textcolor(14);
             cout << "\n  NIM " << nim << " tidak meminjam buku \n";
+            textcolor(15);
         }
         
 
         cout << "\n  Apakah Ingin melanjutkan pengembalian? [y/n]: ";
+
+        textcolor(2);
         cin >> opt;
+        textcolor(15);
 
         status = loopInput(opt);
 
