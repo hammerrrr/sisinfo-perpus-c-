@@ -1,11 +1,11 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <string>
 #include <algorithm>
 #include <stdlib.h>
 #include <windows.h>
-#include <iomanip>
+#include <chrono>
+#include <ctime>
 #include <limits>
 
 using namespace std;
@@ -18,7 +18,7 @@ struct Book {
 
 struct Pinjam {
     struct Book buku;
-    string nim, nama, status;
+    string nim, nama, status, borrow_at, return_at;
 };
 
 // Fungsi untuk menampilkan buku dari databse
@@ -70,6 +70,16 @@ fstream connectDB(string DB);
 // Fungsi untuk check database kosong atau tidak
 int getDBSize(string DB);
 
+string genTime() {
+    auto start = chrono::system_clock::now();
+    time_t end_time = chrono::system_clock::to_time_t(start);
+
+    char * tc = ctime(&end_time);
+    string str = string {tc};
+
+    str.pop_back();
+    return str;
+}
 
 int main() {
     bool status = true;
@@ -599,14 +609,20 @@ void tampilPeminjam(){
             getline(ss, readPeminjam.buku.id, ',');
             getline(ss, readPeminjam.buku.judul, ',');
             getline(ss, readPeminjam.status, ',');
+            getline(ss, readPeminjam.borrow_at, ',');
+            getline(ss, readPeminjam.return_at);
 
             Sleep(500);
             if(line != "") {
-                cout << "| NIM\t\t: " << readPeminjam.nim << endl
-                     << "| Nama Mhs\t: " << readPeminjam.nama << endl
-                     << "| ID Buku\t: " << readPeminjam.buku.id << endl
-                     << "| Judul Buku\t: " << readPeminjam.buku.judul << endl
-                     << "| Status\t: " << readPeminjam.status << endl;
+                
+                cout << "+=======================================================================+\n";
+                cout << "| NIM\t\t\t: " << readPeminjam.nim << endl
+                     << "| Nama Mhs\t\t: " << readPeminjam.nama << endl
+                     << "| ID Buku\t\t: " << readPeminjam.buku.id << endl
+                     << "| Judul Buku\t\t: " << readPeminjam.buku.judul << endl
+                     << "| Status\t\t: " << readPeminjam.status << endl
+                     << "| Tanggal Pinjam\t: " << readPeminjam.borrow_at << endl
+                     << "| Tanggal Kembali\t: " << readPeminjam.return_at << endl;
                 cout << "+=======================================================================+\n";
             }
         }
@@ -758,15 +774,17 @@ void pinjamBuku(){
                             if(idBuku == book.id) {
                                     isBuku = 1;
                                     if(book.stock > 0) {
-                                        peminjam     << pinjam.nim << ","
+                                        peminjam    << pinjam.nim << ","
                                                     << pinjam.nama << ","
                                                     << book.id << ","
                                                     << book.judul << ","
-                                                    << "Pinjam" << "\n";
+                                                    << "Pinjam" << ","
+                                                    << genTime() << ","
+                                                    << "-" << "\n";
 
                                         peminjam.close();
 
-                                        newBuku      << book.id << ","
+                                        newBuku     << book.id << ","
                                                     << book.judul << ","
                                                     << book.pengarang << ","
                                                     << book.penerbit << ","
@@ -860,7 +878,9 @@ void kembalikanBuku(){
             getline(line, kembali.nama, ',');
             getline(line, kembali.buku.id, ',');
             getline(line, kembali.buku.judul, ',');
-            getline(line, kembali.status);
+            getline(line, kembali.status, ',');
+            getline(line, kembali.borrow_at, ',');
+            getline(line, kembali.return_at);
 
             if(lines != "") {
 
@@ -922,20 +942,26 @@ void kembalikanBuku(){
                                     << kembali.nama << ","
                                     << kembali.buku.id << ","
                                     << kembali.buku.judul << ","
-                                    << "Dikembalikan" << "\n";
+                                    << "Dikembalikan" << ","
+                                    << kembali.borrow_at << ","
+                                    << genTime() << "\n";
                     }else {
                         newPeminjam << kembali.nim << ","
                                 << kembali.nama << ","
                                 << kembali.buku.id << ","
                                 << kembali.buku.judul << ","
-                                << kembali.status << "\n";
+                                << kembali.status << ","
+                                << kembali.borrow_at << ","
+                                << kembali.return_at << "\n";
                     }
                 } else {
                     newPeminjam << kembali.nim << ","
                                 << kembali.nama << ","
                                 << kembali.buku.id << ","
                                 << kembali.buku.judul << ","
-                                << kembali.status << "\n";
+                                << kembali.status << ","
+                                << kembali.borrow_at << ","
+                                << kembali.return_at << "\n";
                 }
             } 
         }
