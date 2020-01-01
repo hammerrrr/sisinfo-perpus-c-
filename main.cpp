@@ -93,15 +93,21 @@ string genTime() {
     return str;
 }
 
+void about();
+
 int main() {
     bool status = true;
     string opt;
 
+    textcolor(15);
     while(status) {
         home();
 
         cout << "  Apakah ingin kembali ke menu awal? [y/n]: ";
+
+        textcolor(2);
         cin >> opt;
+        textcolor(15);
 
         status = loopInput(opt);
 
@@ -154,8 +160,8 @@ void home(){
         authAdmin();
     }else if(opt == "7"){
         exit(0);
-    }else if(opt == "8"{
-        
+    }else if(opt == "8"){
+        about();
     }else{
         textcolor(14);
         cout <<  "  ->  Pilihan tidak valid, silahkan masukkan lagi\n\n";
@@ -1172,5 +1178,33 @@ void kembalikanBuku(){
         status = loopInput(opt);
 
     }
+}
+
+void about() {
+    system("cls");
+    Sleep(500);
+    cout << "+=====================================================================+\n"
+         << "|                          Tentang Kami                               |\n"
+         << "+=====================================================================+\n"
+         << "|                      SISINFO PERPUSTAKAAN                           |\n"
+         << "+=====================================================================+\n"
+         << "|      Anggota:                                                       |\n"
+         << "+---------------------------------------------------------------------+\n"
+         << "|      1. Ivan Nur Ilham Syah                                         |\n"
+         << "|      2. Umi Solihah                                                 |\n"
+         << "|      3. Muhammad Fathur Rizqi                                       |\n"
+         << "|      4. Alma Monika Ivo                                             |\n"
+         << "|      5. Stefanus Yoseph M.A. Meak                                   |\n"
+         << "|      6. Khias Nurlatif Ari Subekti                                  |\n"
+         << "|      7. Muhammad Vicri Ariadi                                       |\n"
+         << "|      8. Cahya Laksana                                               |\n"
+         << "+---------------------------------------------------------------------+\n";
+
+    cout << "|      SC: ";
+    textcolor(3);
+    cout << "https://github.com/hammerrrr/sisinfo-perpus-cpp";
+    textcolor(15);
+    cout << "            |\n";
+    cout << "+=====================================================================+\n";
 }
 
