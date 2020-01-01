@@ -2,11 +2,9 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
-#include <stdlib.h>
 #include <windows.h>
 #include <chrono>
 #include <ctime>
-#include <limits>
 
 using namespace std;
 
@@ -109,7 +107,7 @@ void home(){
          << "| 2. Lihat Daftar Peminjam |\n"
          << "| 3. Cari Buku             |\n"
          << "| 4. Pinjam Buku           |\n"
-         << "| 5. Kembalikan Buku       |\n"
+         << "| 5. Pengembalian Buku     |\n"
          << "| 6. Login Admin           |\n"
          << "| 7. Keluar                |\n"
          << "+==========================+\n";
@@ -653,15 +651,15 @@ void admin(){
         //     goto reOption;
         // }
 
-        if(opt == "1") {
+        if(option == "1") {
             tampilBuku();
-        }else if(opt == "2") {
+        }else if(option == "2") {
             tambahBuku();
-        }else if(opt == "3") {
+        }else if(option == "3") {
             editBuku();
-        }else if(opt == "4") {
+        }else if(option == "4") {
             hapusBuku();
-        }else if(opt == "5") {
+        }else if(option == "5") {
             cout << "\n  Anda telah keluar..\n";
             Sleep(1000);
             home();
@@ -820,13 +818,12 @@ void pinjamBuku(){
                         cout << "\n  Buku " << judulBuku << " berhasil dipinjam \n";
                         newBuku.close();
                         buku.close();
+
                         remove("database/buku.csv");
                         rename("database/newBuku.csv", "database/buku.csv");
                 }
             }
         }
-
-        
         
 
         cout << "\n  Apakah Ingin melanjutkan peminjaman? [y/n]: ";
@@ -854,12 +851,15 @@ void kembalikanBuku(){
         
         string lines, lines2, nim, idBuku, stock, judulBuku;
         int isBuku = 0, isNIM = 0;
+
+        cout << "+=======================================================================+\n"
+             << "|                         PENGEMBALIAN BUKU                             |\n"
+             << "+=======================================================================+\n";
         
         reinputNim:
-        cout << "\n  Masukkan NIM: ";
+        cout << "|  Masukkan NIM\t\t: ";
         cin >> nim;
-
-        
+        cout << "+=======================================================================+\n";        
 
         while(peminjam.good()) {
             getline(peminjam, lines);
@@ -880,10 +880,13 @@ void kembalikanBuku(){
                 if(nim == kembali.nim) {
                     isNIM = 1;
 
-                    cout << "  Buku yang dipinjam: [" << kembali.buku.id << "]-" << kembali.buku.judul << endl;
+                    cout << "|  Buku yang dipinjam\t: [" << kembali.buku.id << "]-" << kembali.buku.judul << endl;
+                    cout << "+=======================================================================+\n";
                     
-                    cout << "\n  Masukkan ID Buku: ";
+                    cout << "|  Masukkan ID Buku\t: ";
                     cin >> idBuku;
+                    cout << "+=======================================================================+\n";
+
 
                     while(buku.good()) {
                         getline(buku, lines);
