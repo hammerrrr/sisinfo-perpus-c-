@@ -124,6 +124,7 @@ void home(){
          << "| 5. Pengembalian Buku     |\n"
          << "| 6. Login Admin           |\n"
          << "| 7. Keluar                |\n"
+         << "| 8. Tentang               |\n"
          << "+==========================+\n";
 
     reOption:
@@ -153,6 +154,8 @@ void home(){
         authAdmin();
     }else if(opt == "7"){
         exit(0);
+    }else if(opt == "8"{
+        
     }else{
         textcolor(14);
         cout <<  "  ->  Pilihan tidak valid, silahkan masukkan lagi\n\n";
