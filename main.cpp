@@ -18,7 +18,7 @@ struct Book {
 
 struct Pinjam {
     struct Book buku;
-    string nim;
+    string nim, nama, status;
 };
 
 // Fungsi untuk menampilkan buku dari databse
@@ -47,6 +47,8 @@ void authAdmin();
 
 // Fungsi untuk mengontroll peminjaman
 void pinjamBuku();
+
+void kembalikanBuku();
 
 bool loopInput(char &opt);
 
@@ -97,8 +99,9 @@ void home(){
          << "| 2. Lihat Daftar Peminjam |\n"
          << "| 3. Cari Buku             |\n"
          << "| 4. Pinjam Buku           |\n"
-         << "| 5. Login Admin           |\n"
-         << "| 6. Keluar                |\n"
+         << "| 5. Kembalikan Buku       |\n"
+         << "| 6. Login Admin           |\n"
+         << "| 7. Keluar                |\n"
          << "+==========================+\n";
 
     reOption:
@@ -113,31 +116,34 @@ void home(){
     }
 
     if((opt >= 1) && (opt <= 6)) {
-            switch(opt) {
-                case 1:
-                    tampilBuku();
-                    break;
-                case 2:
-                    tampilPeminjam();
-                    break;
-                case 3:
-                    cariBuku();
-                    break;
-                case 4:
-                    pinjamBuku();
-                    break;
-                case 5:
-                    authAdmin();
-                    break;
-                case 6:
-                    exit(0);
-                    break;
-            }
-        } else {
-            cout <<  "Pilihan tidak valid, silahkan masukkan lagi\n";
-            //Sleep(1000);
-            goto reOption;
+        switch(opt) {
+            case 1:
+                tampilBuku();
+                break;
+            case 2:
+                tampilPeminjam();
+                break;
+            case 3:
+                cariBuku();
+                break;
+            case 4:
+                pinjamBuku();
+                break;
+            case 5:
+                kembalikanBuku();
+                break;
+            case 6:
+                authAdmin();
+                break;
+            case 7:
+                exit(0);
+                break;
         }
+    } else {
+        cout <<  "Pilihan tidak valid, silahkan masukkan lagi\n";
+        //Sleep(1000);
+        goto reOption;
+    }
 
 };
 
@@ -574,7 +580,7 @@ void tampilPeminjam(){
 
 
     if(isEmptyData == 0) {
-       cout << "| Tidak Data Peminjam \t\t\t\t\t|\n"
+       cout << "| Tidak Ada Data Peminjam \t\t\t\t\t\t|\n"
             << "+=======================================================================+\n";
     } else {
 
@@ -589,14 +595,18 @@ void tampilPeminjam(){
             stringstream ss(line);
 
             getline(ss, readPeminjam.nim, ',');
+            getline(ss, readPeminjam.nama, ',');
             getline(ss, readPeminjam.buku.id, ',');
             getline(ss, readPeminjam.buku.judul, ',');
+            getline(ss, readPeminjam.status, ',');
 
             Sleep(500);
             if(line != "") {
                 cout << "| NIM\t\t: " << readPeminjam.nim << endl
+                     << "| Nama Mhs\t: " << readPeminjam.nama << endl
                      << "| ID Buku\t: " << readPeminjam.buku.id << endl
-                     << "| Judul Buku\t: " << readPeminjam.buku.judul << endl;
+                     << "| Judul Buku\t: " << readPeminjam.buku.judul << endl
+                     << "| Status\t: " << readPeminjam.status << endl;
                 cout << "+=======================================================================+\n";
             }
         }
@@ -699,105 +709,262 @@ void pinjamBuku(){
     char opt;
 
     while(status) {
-        cout << "\n  Halaman Pinjam Buku  \n";
+        system("cls");
 
-        fstream data = connectDB("peminjam.csv");
-        fstream mhs = connectDB("mhs.csv");
-        fstream dbBuku = connectDB("buku.csv");
-        fstream newData = connectDB("newBuku.csv");
+        Pinjam pinjam;
+        Book book;
 
-
-        Pinjam addPinjam;
-        Book buku;
-        int jumlah, countNim = 0;
-        string nim, line;
-
-        cout << "  Masukkan NIM: ";
+        fstream dataMhs  = connectDB("mhs.csv");
+        fstream buku     = connectDB("buku.csv");
+        fstream newBuku  = connectDB("newBuku.csv");
+        fstream peminjam = connectDB("peminjam.csv");
+        
+        string lines, nim, idBuku, stock, judulBuku;
+        int isBuku = 0, isNIM = 0, isStock = 1;
+        
+        reinputNim:
+        cout << "\n  Masukkan NIM: ";
         cin >> nim;
 
-        while(mhs.good()) {
-            getline(mhs, line);
-            stringstream ssline(line);
+        while(dataMhs.good()) {
+            getline(dataMhs, lines);
+            
+            stringstream line(lines);
 
-            getline(ssline, addPinjam.nim, '\n');
+            getline(line, pinjam.nim, ',');
+            getline(line, pinjam.nama);
 
-            if(line != "")  {
-                if(nim == addPinjam.nim) {
-                    countNim = 1;
-                    break;
-                }
-            }
-        }
+            if(lines != "") {
 
-        /*
-            TODO: - Check apakah data stock masih ada atau tidak;
-                  - Jika stock kosong, maka buku tidak tersedia;
-                  - Jika mhs sudah meminjam maka tdk bisa melakukan pinjam lagi, max 1;
-                  - Check apakah buku dengan ID yg dimasukkan ada atau tidak;
-        */
+                if(nim == pinjam.nim) {
+                    isNIM = 1;
+                    
+                    cout << "  Masukkan ID Buku: ";
+                    cin >> idBuku;
+                    while(buku.good()) {
+                        getline(buku, lines);
 
-        cout << countNim << endl;
-        string tmpid, stock;
+                        stringstream line(lines);
 
-        if(countNim == 1) {
-            reID:
-            cout << "\n  Masukkan ID Buku\t: ";
-            cin >> addPinjam.buku.id;
-            cin.ignore();
+                        getline(line, book.id, ',');
+                        getline(line, book.judul, ',');
+                        getline(line, book.pengarang, ',');
+                        getline(line, book.penerbit, ',');
+                        getline(line, stock);
 
-            while(dbBuku.good()) {
-                getline(dbBuku, line);
-                stringstream ssline(line);
+                        book.stock = stoi(stock);
 
-                getline(ssline, buku.id, ',');
-                getline(ssline, buku.judul, ',');
-                getline(ssline, buku.pengarang, ',');
-                getline(ssline, buku.penerbit, ',');
-                getline(ssline, stock, '\n');
+                        if(lines != "") {
+                            if(idBuku == book.id) {
+                                    isBuku = 1;
+                                    if(book.stock > 0) {
+                                        peminjam     << pinjam.nim << ","
+                                                    << pinjam.nama << ","
+                                                    << book.id << ","
+                                                    << book.judul << ","
+                                                    << "Pinjam" << "\n";
 
+                                        peminjam.close();
 
-                buku.stock = stoi(stock);
+                                        newBuku      << book.id << ","
+                                                    << book.judul << ","
+                                                    << book.pengarang << ","
+                                                    << book.penerbit << ","
+                                                    << book.stock - 1 << "\n";
 
-                if(line != "")  {
-                    if(addPinjam.buku.id == buku.id) {
-                        data << addPinjam.nim << ","
-                             << buku.id << ","
-                             << buku.judul << "\n";
-
-                        newData << buku.id << ","
-                                << buku.judul << ","
-                                << buku.pengarang << ","
-                                << buku.penerbit << ","
-                                << buku.stock - 1 << "\n";
-                    }else {
-                        newData << buku.id << ","
-                                << buku.judul << ","
-                                << buku.pengarang << ","
-                                << buku.penerbit << ","
-                                << stock << "\n";
+                                        judulBuku = book.judul;
+                                    } else {
+                                        isStock = 0;
+                                        newBuku << book.id << ","
+                                                << book.judul << ","
+                                                << book.pengarang << ","
+                                                << book.penerbit << ","
+                                                << book.stock << "\n";
+                                    }
+                                } else {
+                                    newBuku     << book.id << ","
+                                                << book.judul << ","
+                                                << book.pengarang << ","
+                                                << book.penerbit << ","
+                                                << book.stock << "\n";
+                                }
+                        }
                     }
                 }
             }
-
-
-
-        } else {
-
-            cout << "\n  NIM tidak ditemukan \n";
         }
 
-        data.close();
-        mhs.close();
-        dbBuku.close();
-        newData.close();
+        
+        if(isNIM == 0){
+                cout << "\n  Mahasiswa tidak ditemukan \n";
+                newBuku.close();
+                remove("newBuku.csv");
+        } else {
+            if(isBuku == 0) {
+                    cout << "  Buku yang dipinjam tidak ditemukan \n";
+            } else {
+                if(isStock == 0)  {
+                    cout << "  Stock 0, Buku tidak bisa dipinjam\n";
+                } else {
+                        cout << "\n  Buku " << judulBuku << " berhasil dipinjam \n";
+                        newBuku.close();
+                        buku.close();
+                        remove("database/buku.csv");
+                        rename("database/newBuku.csv", "database/buku.csv");
+                }
+            }
+        }
 
-        remove("database/buku.csv");
-        rename("database/newBuku.csv", "database/buku.csv");
+        
+        
 
-        cout << "  Ingin melanjutkan pinjam buku? [y/n]: ";
+        cout << "\n  Apakah Ingin melanjutkan peminjaman? [y/n]: ";
         cin >> opt;
 
         status = loopInput(opt);
+
     }
 };
+
+void kembalikanBuku(){
+    bool status = true;
+    char opt;
+
+    while(status) {
+        system("cls");
+
+        Pinjam kembali;
+        Book book;
+
+        fstream peminjam        = connectDB("peminjam.csv");
+        fstream newPeminjam     = connectDB("newPeminjam.csv");
+        fstream newBuku         = connectDB("newBuku.csv");
+        fstream buku            = connectDB("buku.csv");
+        
+        string lines, lines2, nim, idBuku, stock, judulBuku;
+        int isBuku = 0, isNIM = 0;
+        
+        reinputNim:
+        cout << "\n  Masukkan NIM: ";
+        cin >> nim;
+
+        
+
+        while(peminjam.good()) {
+            getline(peminjam, lines);
+            
+            stringstream line(lines);
+
+
+            getline(line, kembali.nim, ',');
+            getline(line, kembali.nama, ',');
+            getline(line, kembali.buku.id, ',');
+            getline(line, kembali.buku.judul, ',');
+            getline(line, kembali.status);
+
+            if(lines != "") {
+
+                if(nim == kembali.nim) {
+                    isNIM = 1;
+
+                    cout << "  Buku yang dipinjam: [" << kembali.buku.id << "]-" << kembali.buku.judul << endl;
+                    
+                    cout << "\n  Masukkan ID Buku: ";
+                    cin >> idBuku;
+
+                    while(buku.good()) {
+                        getline(buku, lines);
+
+                        stringstream line(lines);
+                        
+                        getline(line, book.id, ',');
+                        getline(line, book.judul, ',');
+                        getline(line, book.pengarang, ',');
+                        getline(line, book.penerbit, ',');
+                        getline(line, stock);
+
+                        book.stock = stoi(stock);
+
+                        if(lines != "") {
+                            if(idBuku == kembali.buku.id) {
+                                isBuku = 1;
+
+                                if(idBuku == book.id) {
+                                    newBuku << book.id << ","
+                                        << book.judul << ","
+                                        << book.pengarang << ","
+                                        << book.penerbit << ","
+                                        << book.stock + 1 << "\n";
+
+                                }else {
+                                    newBuku << book.id << ","
+                                        << book.judul << ","
+                                        << book.pengarang << ","
+                                        << book.penerbit << ","
+                                        << book.stock << "\n";
+                                }
+
+                                judulBuku = kembali.buku.judul;
+
+                            }else {
+                                newBuku << book.id << ","
+                                        << book.judul << ","
+                                        << book.pengarang << ","
+                                        << book.penerbit << ","
+                                        << book.stock << "\n";
+                                        
+                            }
+                        }
+                    }
+
+                    if(isBuku == 1) {
+                        newPeminjam << kembali.nim << ","
+                                    << kembali.nama << ","
+                                    << kembali.buku.id << ","
+                                    << kembali.buku.judul << ","
+                                    << "Dikembalikan" << "\n";
+                    }else {
+                        newPeminjam << kembali.nim << ","
+                                << kembali.nama << ","
+                                << kembali.buku.id << ","
+                                << kembali.buku.judul << ","
+                                << kembali.status << "\n";
+                    }
+                } else {
+                    newPeminjam << kembali.nim << ","
+                                << kembali.nama << ","
+                                << kembali.buku.id << ","
+                                << kembali.buku.judul << ","
+                                << kembali.status << "\n";
+                }
+            } 
+        }
+
+            
+        newBuku.close();
+        peminjam.close();
+        newPeminjam.close();
+        buku.close();
+
+        if(isBuku == 1) cout << "\n  Buku " << judulBuku << " berhasil dikembalikan.\n";
+        if(isNIM == 1) {
+            remove("database/buku.csv");
+            rename("database/newBuku.csv", "database/buku.csv");
+
+            remove("database/peminjam.csv");
+            rename("database/newPeminjam.csv", "database/peminjam.csv");
+        } else {
+            remove("database/newBuku.csv");
+            remove("database/newPeminjam.csv");
+            cout << "\n  NIM " << nim << " tidak meminjam buku \n";
+        }
+        
+
+        cout << "\n  Apakah Ingin melanjutkan pengembalian? [y/n]: ";
+        cin >> opt;
+
+        status = loopInput(opt);
+
+    }
+}
 
