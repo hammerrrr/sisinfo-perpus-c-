@@ -100,7 +100,7 @@ int main() {
 
 void home(){
     system("cls");
-    int opt;
+    string opt;
 
     cout << "+==========================+\n"
          << "|      PERPUSTAKAAN        |\n"
@@ -118,40 +118,30 @@ void home(){
     cout << "  Masukkan Pilihan: ";
     cin >> opt;
 
-    while(cin.fail()) {
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cout <<  "  Pilihan tidak valid, silahkan masukkan lagi\n";
-        goto reOption;
-    }
+    // while(cin.fail()) {
+    //     cin.clear();
+    //     cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    //     cout <<  "  Pilihan tidak valid, silahkan masukkan lagi\n";
+    //     goto reOption;
+    // }
 
-    if((opt >= 1) && (opt <= 6)) {
-        switch(opt) {
-            case 1:
-                tampilBuku();
-                break;
-            case 2:
-                tampilPeminjam();
-                break;
-            case 3:
-                cariBuku();
-                break;
-            case 4:
-                pinjamBuku();
-                break;
-            case 5:
-                kembalikanBuku();
-                break;
-            case 6:
-                authAdmin();
-                break;
-            case 7:
-                exit(0);
-                break;
-        }
-    } else {
-        cout <<  "Pilihan tidak valid, silahkan masukkan lagi\n";
-        //Sleep(1000);
+    if (opt == "1") {
+        tampilBuku();
+    }else if(opt == "2") {
+        tampilPeminjam();
+    }else if (opt == "3") {
+        cariBuku();
+    }else if(opt == "4") {
+        pinjamBuku();
+    }else if(opt == "5") {
+        kembalikanBuku();
+    }else if(opt == "6") {
+        authAdmin();
+    }else if(opt == "7"){
+        exit(0);
+    }else{
+        cout <<  "  Pilihan tidak valid, silahkan masukkan lagi\n\n";
+        Sleep(500);
         goto reOption;
     }
 
@@ -234,14 +224,16 @@ void tampilBuku(){
 
             Sleep(500);
             if(line != "") {
+                cout << "+=======================================================================+\n";
                 cout << "| ID Buku\t: " << readBook.id << endl
                      << "| Judul Buku\t: " << readBook.judul << endl
                      << "| Pengarang\t: " << readBook.pengarang << endl
                      << "| Penerbit\t: " << readBook.penerbit << endl
                      << "| Stock Buku\t: " << stock << endl;
-                cout << "+=======================================================================+\n";
             }
         }
+        Sleep(500);
+        cout << "+=======================================================================+\n";
     }
 
     data.close();
@@ -623,9 +615,11 @@ void tampilPeminjam(){
                      << "| Status\t\t: " << readPeminjam.status << endl
                      << "| Tanggal Pinjam\t: " << readPeminjam.borrow_at << endl
                      << "| Tanggal Kembali\t: " << readPeminjam.return_at << endl;
-                cout << "+=======================================================================+\n";
             }
         }
+        
+        Sleep(500);
+        cout << "+=======================================================================+\n";
     }
 
     data.close();
@@ -634,7 +628,7 @@ void tampilPeminjam(){
 void admin(){
     bool status = true;
     char opt;
-    int option;
+    string option;
 
     while(status) {
         system("cls");
@@ -652,36 +646,28 @@ void admin(){
         cout << "  Masukkan Pilihan: ";
         cin >> option;
 
-        while(cin.fail()) {
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout <<  "  Pilihan tidak valid, silahkan masukkan lagi\n";
-            goto reOption;
-        }
+        // while(cin.fail()) {
+        //     cin.clear();
+        //     cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        //     cout <<  "  Pilihan tidak valid, silahkan masukkan lagi\n";
+        //     goto reOption;
+        // }
 
-        if((option >= 1) && (option <= 6)) {
-            switch(option) {
-                case 1:
-                    tampilBuku();
-                    break;
-                case 2:
-                    tambahBuku();
-                    break;
-                case 3:
-                    editBuku();
-                    break;
-                case 4:
-                    hapusBuku();
-                    break;
-                case 5:
-                    cout << "\n  Anda telah keluar..\n";
-                    Sleep(1000);
-                    home();
-                    break;
-            }
-        } else {
+        if(opt == "1") {
+            tampilBuku();
+        }else if(opt == "2") {
+            tambahBuku();
+        }else if(opt == "3") {
+            editBuku();
+        }else if(opt == "4") {
+            hapusBuku();
+        }else if(opt == "5") {
+            cout << "\n  Anda telah keluar..\n";
+            Sleep(1000);
+            home();
+        }else {
             cout <<  "Pilihan tidak valid, silahkan masukkan lagi\n";
-            //Sleep(1000);
+            Sleep(500);
             goto reOption;
         }
 
@@ -737,10 +723,15 @@ void pinjamBuku(){
         
         string lines, nim, idBuku, stock, judulBuku;
         int isBuku = 0, isNIM = 0, isStock = 1;
+
+        cout << "+=======================================================================+\n"
+             << "|                             PINJAM BUKU                               |\n"
+             << "+=======================================================================+\n";
         
         reinputNim:
-        cout << "\n  Masukkan NIM: ";
+        cout << "|  Masukkan NIM\t\t: ";
         cin >> nim;
+        cout << "+=======================================================================+\n";
 
         while(dataMhs.good()) {
             getline(dataMhs, lines);
@@ -755,8 +746,10 @@ void pinjamBuku(){
                 if(nim == pinjam.nim) {
                     isNIM = 1;
                     
-                    cout << "  Masukkan ID Buku: ";
+                    cout << "|  Masukkan ID Buku\t: ";
                     cin >> idBuku;
+                    cout << "+=======================================================================+\n";
+
                     while(buku.good()) {
                         getline(buku, lines);
 
@@ -819,10 +812,10 @@ void pinjamBuku(){
                 remove("newBuku.csv");
         } else {
             if(isBuku == 0) {
-                    cout << "  Buku yang dipinjam tidak ditemukan \n";
+                    cout << "\n  Buku yang dipinjam tidak ditemukan \n";
             } else {
                 if(isStock == 0)  {
-                    cout << "  Stock 0, Buku tidak bisa dipinjam\n";
+                    cout << "\n  Stock 0, Buku tidak bisa dipinjam\n";
                 } else {
                         cout << "\n  Buku " << judulBuku << " berhasil dipinjam \n";
                         newBuku.close();
