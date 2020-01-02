@@ -20,80 +20,37 @@ struct Pinjam {
     string nim, nama, status, borrow_at, return_at;
 };
 
-void textcolor (int color) {
-    static int __BACKGROUND;
+// Utilize
+void textcolor (int color);
+bool loopInput(string &opt);
+string genTime();
+string toLower(string data);
 
-    HANDLE h = GetStdHandle ( STD_OUTPUT_HANDLE );
-    CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
-
-
-    GetConsoleScreenBufferInfo(h, &csbiInfo);
-
-    SetConsoleTextAttribute (GetStdHandle (STD_OUTPUT_HANDLE),
-                             color + (__BACKGROUND << 4));
-}
-
-// Fungsi untuk menampilkan buku dari databse
+// Fungsi Buku
 void tampilBuku();
-
-// Fungsi untuk menambah buku ke databse
 void tambahBuku();
-
-// Fungsi untuk mencari data buku
 void cariBuku();
-
-// Fungsi untuk mengedit data buku
 void editBuku();
-
-// Fungsi untuk menghapus data buku dari databse
 void hapusBuku();
 
-// Fungsi untuk menampilkan data peminjam dari databse
+// Fungsi Peminjam
 void tampilPeminjam();
-
-// Fungsi untuk menampilkan menu admin
-void admin();
-
-// Fungsi untuk menontroll login admin
-void authAdmin();
-
-// Fungsi untuk mengontroll peminjaman
 void pinjamBuku();
-
 void kembalikanBuku();
 
-bool loopInput(string &opt);
+// Fungsi Admin
+void admin();
+void authAdmin();
 
-// fungsi untuk mengubah string ke lowercase
-string toLower(string data) {
-    for_each(data.begin(), data.end(), [](char &c) {
-        c = ::tolower(c);
-    });
+// About Us
+void about();
 
-    return data;
-
-}
-
-// Fungsi untuk menampilkan menu awal program
-void home();
-
+// Fungsi Database
 fstream connectDB(string DB);
-
-// Fungsi untuk check database kosong atau tidak
 int getDBSize(string DB);
 
-string genTime() {
-    auto start = chrono::system_clock::now();
-    time_t end_time = chrono::system_clock::to_time_t(start);
-
-    char * tc = ctime(&end_time);
-    string str = string {tc};
-
-    str.pop_back();
-    return str;
-}
-
-void about();
+// Fungsi Home
+void home();
 
 int main() {
     bool status = true;
@@ -115,7 +72,6 @@ int main() {
 
     return 0;
 }
-
 void home(){
     system("cls");
     string opt;
@@ -171,7 +127,6 @@ void home(){
     }
 
 };
-
 fstream connectDB(string DB) {
     fstream data;
     data.open("database\\" + DB, ios::in | ios::out | ios::app);
@@ -184,12 +139,10 @@ fstream connectDB(string DB) {
 
     return data;
 }
-
 bool loopInput(string &opt) {
     if((opt == "n") || (opt == "N")) return false;
     else if((opt == "y") || (opt == "Y")) return true;
 }
-
 int getDBSize(string DBName){
     fstream data = connectDB(DBName);
 
@@ -205,6 +158,37 @@ int getDBSize(string DBName){
     data.close();
 
 }
+string toLower(string data) {
+    for_each(data.begin(), data.end(), [](char &c) {
+        c = ::tolower(c);
+    });
+
+    return data;
+
+}
+string genTime() {
+    auto start = chrono::system_clock::now();
+    time_t end_time = chrono::system_clock::to_time_t(start);
+
+    char * tc = ctime(&end_time);
+    string str = string {tc};
+
+    str.pop_back();
+    return str;
+}
+void textcolor (int color) {
+    static int __BACKGROUND;
+
+    HANDLE h = GetStdHandle ( STD_OUTPUT_HANDLE );
+    CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
+
+
+    GetConsoleScreenBufferInfo(h, &csbiInfo);
+
+    SetConsoleTextAttribute (GetStdHandle (STD_OUTPUT_HANDLE),
+                             color + (__BACKGROUND << 4));
+}
+
 void tampilBuku(){
     /*
         tampilBuku() digunakan untuk menampilkan data buku dari database.
@@ -766,110 +750,6 @@ void tampilPeminjam(){
     data.close();
 
 };
-void admin(){
-    bool status = true;
-    string opt;
-    string option;
-
-    while(status) {
-        system("cls");
-        cout << "+==========================+\n"
-             << "|      ADMINISTRATOR       |\n"
-             << "+==========================+\n"
-             << "| 1. Lihat Daftar Buku     |\n"
-             << "| 2. Tambah Buku           |\n"
-             << "| 3. Edit Buku             |\n"
-             << "| 4. Hapus Buku            |\n"
-             << "| 5. Logout                |\n"
-             << "+==========================+\n";
-
-        reOption:
-        cout << "  Masukkan Pilihan: ";
-
-        textcolor(2);
-        cin >> option;
-        textcolor(15);
-
-        // while(cin.fail()) {
-        //     cin.clear();
-        //     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        //     cout <<  "  Pilihan tidak valid, silahkan masukkan lagi\n";
-        //     goto reOption;
-        // }
-
-        if(option == "1") {
-            tampilBuku();
-        }else if(option == "2") {
-            tambahBuku();
-        }else if(option == "3") {
-            editBuku();
-        }else if(option == "4") {
-            hapusBuku();
-        }else if(option == "5") {
-            textcolor(14);
-            cout << "\n  ->  Anda telah keluar..\n";
-            textcolor(15);
-
-            Sleep(1000);
-            home();
-        }else {
-
-            textcolor(4);
-            cout <<  "  -> Pilihan tidak valid, silahkan masukkan lagi\n";
-            textcolor(15);
-
-            Sleep(500);
-            goto reOption;
-        }
-
-        cout << "  Apakah ingin melanjutkan ke menu Admin? [y/n]: ";
-
-        textcolor(2);
-        cin >> opt;
-        textcolor(15);
-
-        status = loopInput(opt);
-    }
-};
-void authAdmin(){
-    bool status = true;
-    string opt;
-
-    while(status) {
-        string username, password;
-
-        cout << "\n  Login Administrator \n";
-        relogin:
-        cout << "  Masukkan Username: ";
-        textcolor(2);
-        cin >> username;
-        textcolor(15);
-
-        cout << "  Masukkan Passowrd: ";
-        textcolor(2);
-        cin >> password;
-        textcolor(15);
-
-        if((username == "admin") && (password == "admin")) {
-            Sleep(1000);
-            admin();
-        } else {
-            Sleep(1000);
-            textcolor(4);
-            cout << "  ->  Username atau Password salah! Silahkan cek ulang\n\n";
-            textcolor(15);
-            goto relogin;
-        }
-
-        textcolor(14);
-        cout << "  Anda telah keluar, Apakah ingin login kembali? [y/n]: ";
-        textcolor(2);
-        cin >> opt;
-        textcolor(15);
-
-        status = loopInput(opt);
-    }
-};
 void pinjamBuku(){
     bool status = true;
     string opt;
@@ -878,7 +758,7 @@ void pinjamBuku(){
         system("cls");
 
         Pinjam pinjam;
-        Book book;
+        Book book, checkBook;
 
         fstream dataMhs  = connectDB("mhs.csv");
         fstream buku     = connectDB("buku.csv");
@@ -886,7 +766,33 @@ void pinjamBuku(){
         fstream peminjam = connectDB("peminjam.csv");
         
         string lines, nim, idBuku, stock, judulBuku;
+
+        vector<string> vecID, vecJudul;
+        
         int isBuku = 0, isNIM = 0, isStock = 1;
+
+        while(buku.good()) {
+            getline(buku, lines);
+
+            stringstream line(lines);
+
+            getline(line, checkBook.id , ',');
+            getline(line, checkBook.judul , ',');
+            getline(line, checkBook.pengarang , ',');
+            getline(line, checkBook.penerbit , ',');
+            getline(line, stock , ',');
+            checkBook.stock = stoi(stock);
+
+            if(lines != "") {
+                if(checkBook.stock > 0) {
+                    vecID.push_back(checkBook.id);
+                    vecJudul.push_back(checkBook.judul);
+                }
+            }
+        }
+
+        buku.close();
+        buku = connectDB("buku.csv");
 
         cout << "+=======================================================================+\n"
              << "|                             PINJAM BUKU                               |\n"
@@ -911,6 +817,14 @@ void pinjamBuku(){
 
                 if(nim == pinjam.nim) {
                     isNIM = 1;
+
+                    cout << "|  Buku yang tersedia: \n";
+
+                    for( int i = 0; i < vecID.size(); i++ ) {
+                        cout << "|  [" << vecID[i] << "] - " << vecJudul[i] << endl;
+                    }
+                    cout << "+=======================================================================+\n";
+
                     
                     cout << "|  Masukkan ID Buku\t: ";
                     textcolor(2);
@@ -1019,7 +933,6 @@ void pinjamBuku(){
 
     }
 };
-
 void kembalikanBuku(){
     bool status = true;
     string opt;
@@ -1196,7 +1109,110 @@ void kembalikanBuku(){
 
     }
 }
+void admin(){
+    bool status = true;
+    string opt;
+    string option;
 
+    while(status) {
+        system("cls");
+        cout << "+==========================+\n"
+             << "|      ADMINISTRATOR       |\n"
+             << "+==========================+\n"
+             << "| 1. Lihat Daftar Buku     |\n"
+             << "| 2. Tambah Buku           |\n"
+             << "| 3. Edit Buku             |\n"
+             << "| 4. Hapus Buku            |\n"
+             << "| 5. Logout                |\n"
+             << "+==========================+\n";
+
+        reOption:
+        cout << "  Masukkan Pilihan: ";
+
+        textcolor(2);
+        cin >> option;
+        textcolor(15);
+
+        // while(cin.fail()) {
+        //     cin.clear();
+        //     cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        //     cout <<  "  Pilihan tidak valid, silahkan masukkan lagi\n";
+        //     goto reOption;
+        // }
+
+        if(option == "1") {
+            tampilBuku();
+        }else if(option == "2") {
+            tambahBuku();
+        }else if(option == "3") {
+            editBuku();
+        }else if(option == "4") {
+            hapusBuku();
+        }else if(option == "5") {
+            textcolor(14);
+            cout << "\n  ->  Anda telah keluar..\n";
+            textcolor(15);
+
+            Sleep(1000);
+            home();
+        }else {
+
+            textcolor(4);
+            cout <<  "  -> Pilihan tidak valid, silahkan masukkan lagi\n";
+            textcolor(15);
+
+            Sleep(500);
+            goto reOption;
+        }
+
+        cout << "  Apakah ingin melanjutkan ke menu Admin? [y/n]: ";
+
+        textcolor(2);
+        cin >> opt;
+        textcolor(15);
+
+        status = loopInput(opt);
+    }
+};
+void authAdmin(){
+    bool status = true;
+    string opt;
+
+    while(status) {
+        string username, password;
+
+        cout << "\n  Login Administrator \n";
+        relogin:
+        cout << "  Masukkan Username: ";
+        textcolor(2);
+        cin >> username;
+        textcolor(15);
+
+        cout << "  Masukkan Passowrd: ";
+        textcolor(2);
+        cin >> password;
+        textcolor(15);
+
+        if((username == "admin") && (password == "admin")) {
+            Sleep(1000);
+            admin();
+        } else {
+            Sleep(1000);
+            textcolor(4);
+            cout << "  ->  Username atau Password salah! Silahkan cek ulang\n\n";
+            textcolor(15);
+            goto relogin;
+        }
+
+        textcolor(14);
+        cout << "  Anda telah keluar, Apakah ingin login kembali? [y/n]: ";
+        textcolor(2);
+        cin >> opt;
+        textcolor(15);
+
+        status = loopInput(opt);
+    }
+};
 void about() {
     system("cls");
     Sleep(500);
