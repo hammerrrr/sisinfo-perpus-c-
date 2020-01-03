@@ -188,7 +188,10 @@ void textcolor (int color) {
     SetConsoleTextAttribute (GetStdHandle (STD_OUTPUT_HANDLE),
                              color + (__BACKGROUND << 4));
 }
-
+void removeTempData() {
+    remove("database/newBuku.csv");
+    remove("database/newPeminjam.csv");
+}
 void tampilBuku(){
     /*
         tampilBuku() digunakan untuk menampilkan data buku dari database.
@@ -264,8 +267,7 @@ void tambahBuku(){
              << "|                              TAMBAH BUKU                              |\n"
              << "+=======================================================================+\n";
 
-        fstream data = connectDB("buku.csv");
-        fstream newData = connectDB("newBuku.csv");
+        fstream data    = connectDB("buku.csv");
 
         Book addBook, checkBook;
         int jumlah, countAdd = 0;
@@ -333,10 +335,10 @@ void tambahBuku(){
                  << addBook.penerbit << ","
                  << addBook.stock << "\n";
         }else {
-            cout << "   ->  ID Buku Sudah ada. Silahkan masukkan yang lain\n\n";
-            Sleep(1000);
+            textcolor(14);
+            cout << "   -|  ID Buku Sudah ada. Silahkan masukkan yang lain\n\n";
+            textcolor(15);
         }
-
         
 
         cout << "  Ingin melanjutkan tambah data? [y/n]: ";
@@ -399,7 +401,7 @@ void cariBuku(){
                         //cout << "Judul: " << tmp;
                         if((toLower(cari) == toLower(tmp)) ||(toLower(cari) == toLower(findBook.id)) || (toLower(cari) == toLower(findBook.judul)) || (toLower(cari) == toLower(findBook.pengarang)) || (toLower(cari) == toLower(findBook.penerbit))) {
                             cout << "| ID Buku\t: " << findBook.id << endl
-                                 << "| Judul Bukut\t: " << findBook.judul << endl
+                                 << "| Judul Buku\t: " << findBook.judul << endl
                                  << "| Pengarang\t: " << findBook.pengarang << endl
                                  << "| Penerbit\t: " << findBook.penerbit << endl
                                  << "| Stock Buku\t: " << stock << endl;
@@ -413,7 +415,7 @@ void cariBuku(){
             }
 
             if((countCari == 0)) {
-                cout << "\n  ->  Data dengan Keyword "; 
+                cout << "\n  -|  Data dengan Keyword "; 
 
                 textcolor(3);
                 cout << "\"" << cari << "\"";
@@ -443,20 +445,23 @@ void editBuku(){
     while(status) {
         system("cls");
 
-        fstream data = connectDB("buku.csv");
+        removeTempData();
+
+        fstream data    = connectDB("buku.csv");
         fstream newData = connectDB("newBuku.csv");
 
         cout << "+=======================================================================+\n"
              << "|                               EDIT BUKU                               |\n"
              << "+=======================================================================+\n";
 
-            string stock, line, idBuku, newVal;
-            int countEdit = 0, element;
+            string stock, line, idBuku, newVal, element;
+            int countEdit = 0;
 
             cout << "|  Masukkan ID Buku: ";
 
             textcolor(2);
             cin >> idBuku;
+            cin.ignore();
             textcolor(15);
 
             cout << "+=======================================================================+\n";
@@ -477,7 +482,7 @@ void editBuku(){
                 if(idBuku == editBook.id) {
                     cout << "+=======================================================================+\n"
                          << "| ID Buku\t: " << editBook.id << endl
-                         << "| Judul Bukut\t: " << editBook.judul << endl
+                         << "| Judul Buku\t: " << editBook.judul << endl
                          << "| Pengarang\t: " << editBook.pengarang << endl
                          << "| Penerbit\t: " << editBook.penerbit << endl
                          << "| Stock Buku\t: " << stock << endl;
@@ -485,6 +490,7 @@ void editBuku(){
 
                     cout << "\n  Pilih data yang akan diedit: \n";
 
+                    reElement:
                     textcolor(3);
                     cout << "  1. Judul, 2. Pengarang, 3. Penerbit, 4. Stock: ";
                     textcolor(15);
@@ -495,11 +501,18 @@ void editBuku(){
 
                     cin.ignore();
 
-                    cout << "\n  Masukkan Data Baru: ";
+                    if(element == "1" || element == "2" || element == "3" || element == "4") {
+                        cout << "\n  Masukkan Data Baru: ";
 
-                    textcolor(2);
-                    getline(cin, newVal);
-                    textcolor(15);
+                        textcolor(2);
+                        getline(cin, newVal);
+                        textcolor(15);
+                    }else {
+                        textcolor(14);
+                        cout << "  -| Pilihan tidak valid, masukkan ulang\n\n";
+                        textcolor(15);
+                        goto reElement;
+                    }
 
                 }
 
@@ -523,35 +536,30 @@ void editBuku(){
 
                             countEdit = 1;
 
-                            switch(element){
-                                case 1:
-                                    newData << editBook.id << ","
-                                            << newVal << ","
-                                            << editBook.pengarang << ","
-                                            << editBook.penerbit << ","
-                                            << stock << "\n";
-                                    break;
-                                case 2:
-                                    newData << editBook.id << ","
-                                            << editBook.judul << ","
-                                            << newVal << ","
-                                            << editBook.penerbit << ","
-                                            << stock << "\n";
-                                    break;
-                                case 3:
-                                    newData << editBook.id << ","
-                                            << editBook.judul << ","
-                                            << editBook.pengarang << ","
-                                            << newVal << ","
-                                            << stock << "\n";
-                                    break;
-                                case 4:
-                                    newData << editBook.id << ","
-                                            << editBook.judul << ","
-                                            << editBook.pengarang << ","
-                                            << editBook.penerbit << ","
-                                            << newVal << "\n";
-                                    break;
+                            if(element == "1") {
+                                newData << editBook.id << ","
+                                        << newVal << ","
+                                        << editBook.pengarang << ","
+                                        << editBook.penerbit << ","
+                                        << stock << "\n";
+                            }else if(element == "2") {
+                                newData << editBook.id << ","
+                                        << editBook.judul << ","
+                                        << newVal << ","
+                                        << editBook.penerbit << ","
+                                        << stock << "\n";
+                            }else if(element == "3") {
+                                newData << editBook.id << ","
+                                        << editBook.judul << ","
+                                        << editBook.pengarang << ","
+                                        << newVal << ","
+                                        << stock << "\n";
+                            }else if(element == "4") {
+                                newData << editBook.id << ","
+                                        << editBook.judul << ","
+                                        << editBook.pengarang << ","
+                                        << editBook.penerbit << ","
+                                        << newVal << "\n";
                             }
                             countEdit = 1;
                         }
@@ -561,7 +569,7 @@ void editBuku(){
             }
 
             if((countEdit == 1)) {
-                cout << "\n  ->  Data pada Buku dengan ID: ";
+                cout << "\n  -|  Data pada Buku dengan ID: ";
 
                 textcolor(3);
                 cout << "\"" << idBuku << "\"";
@@ -569,7 +577,7 @@ void editBuku(){
 
                 cout << " telah diubah \n\n";
             } else {
-                cout << "\n  ->  Buku dengan ID: ";
+                cout << "\n  -|  Buku dengan ID: ";
 
                 textcolor(3);
                 cout << "\"" << idBuku << "\"";
@@ -604,6 +612,8 @@ void hapusBuku(){
 
     while(status) {
         system("cls");
+
+        removeTempData();
 
         fstream data    = connectDB("buku.csv");
         fstream newData = connectDB("newBuku.csv");
@@ -657,7 +667,7 @@ void hapusBuku(){
             }
 
             if((countDel == 1)) {
-                cout << "\n  ->  Buku dengan ID: ";
+                cout << "\n  -|  Buku dengan ID: ";
 
                 textcolor(3);
                 cout << "\"" << idBuku << "\""; 
@@ -665,7 +675,7 @@ void hapusBuku(){
 
                 cout << " telah dihapus \n\n";
             } else {
-                cout << "\n  ->  Buku dengan ID: ";
+                cout << "\n  -|  Buku dengan ID: ";
 
                 textcolor(3);
                 cout << "\"" << idBuku << "\"";
@@ -757,6 +767,8 @@ void pinjamBuku(){
     while(status) {
         system("cls");
 
+        removeTempData();
+
         Pinjam pinjam;
         Book book, checkBook;
 
@@ -768,8 +780,8 @@ void pinjamBuku(){
         string lines, nim, idBuku, stock, judulBuku;
 
         vector<string> vecID, vecJudul;
-        
-        int isBuku = 0, isNIM = 0, isStock = 1;
+
+        int isBuku = 0, isNIM = 0, isStock = 1, isPinjam = 0;
 
         while(buku.good()) {
             getline(buku, lines);
@@ -817,71 +829,130 @@ void pinjamBuku(){
 
                 if(nim == pinjam.nim) {
                     isNIM = 1;
+                    Pinjam checkPeminjam;
 
-                    cout << "|  Buku yang tersedia: \n";
-
-                    for( int i = 0; i < vecID.size(); i++ ) {
-                        cout << "|  [" << vecID[i] << "] - " << vecJudul[i] << endl;
-                    }
-                    cout << "+=======================================================================+\n";
-
-                    
-                    cout << "|  Masukkan ID Buku\t: ";
-                    textcolor(2);
-                    cin >> idBuku;
-                    textcolor(15);
-                    cout << "+=======================================================================+\n";
-
-                    while(buku.good()) {
-                        getline(buku, lines);
+                    while(peminjam.good()) {
+                        getline(peminjam, lines);
 
                         stringstream line(lines);
 
-                        getline(line, book.id, ',');
-                        getline(line, book.judul, ',');
-                        getline(line, book.pengarang, ',');
-                        getline(line, book.penerbit, ',');
-                        getline(line, stock);
+                        getline(line, checkPeminjam.nim, ',');
+                        getline(line, checkPeminjam.nama, ',');
+                        getline(line, checkPeminjam.buku.id, ',');
+                        getline(line, checkPeminjam.buku.judul, ',');
+                        getline(line, checkPeminjam.status, ',');
+                        getline(line, checkPeminjam.borrow_at, ',');
+                        getline(line, checkPeminjam.return_at, ',');
 
-                        book.stock = stoi(stock);
+                        if(nim == checkPeminjam.nim) {
+                            if(checkPeminjam.status == "Pinjam") {
+                                cout << "\n  -|  Anda sudah meminjam buku, Peminjaman Max. 1 per Mahasiswa\n";
+                                isPinjam = 1;
+                                break;
+                            }
+                        }
+                    }
 
-                        if(lines != "") {
-                            if(idBuku == book.id) {
-                                    isBuku = 1;
-                                    if(book.stock > 0) {
-                                        peminjam    << pinjam.nim << ","
-                                                    << pinjam.nama << ","
-                                                    << book.id << ","
+                    peminjam.close();
+                    peminjam = connectDB("peminjam.csv");
+
+                    if(isPinjam == 0) {
+                        cout << "|  Buku yang tersedia\t: \n";
+
+                        for( int i = 0; i < vecID.size(); i++ ) {
+                            cout << "|  [" << vecID[i] << "] - " << vecJudul[i] << endl;
+                        }
+                        cout << "+=======================================================================+\n";
+
+                        
+                        cout << "|  Masukkan ID Buku\t: ";
+                        textcolor(2);
+                        cin >> idBuku;
+                        textcolor(15);
+                        cout << "+=======================================================================+\n";
+
+                        while(buku.good()) {
+                            getline(buku, lines);
+
+                            stringstream line(lines);
+
+                            getline(line, book.id, ',');
+                            getline(line, book.judul, ',');
+                            getline(line, book.pengarang, ',');
+                            getline(line, book.penerbit, ',');
+                            getline(line, stock);
+
+                            book.stock = stoi(stock);
+
+                            if(lines != "") {
+                                if(idBuku == book.id) {
+                                        isBuku = 1;
+
+                                        if(book.stock > 0) {
+                                            peminjam    << pinjam.nim << ","
+                                                        << pinjam.nama << ","
+                                                        << book.id << ","
+                                                        << book.judul << ","
+                                                        << "Pinjam" << ","
+                                                        << genTime() << ","
+                                                        << "-" << "\n";
+
+                                            peminjam.close();
+
+                                            newBuku     << book.id << ","
+                                                        << book.judul << ","
+                                                        << book.pengarang << ","
+                                                        << book.penerbit << ","
+                                                        << book.stock - 1 << "\n";
+
+                                            judulBuku = book.judul;
+                                        } else {
+                                            isStock = 0;
+                                            newBuku << book.id << ","
                                                     << book.judul << ","
-                                                    << "Pinjam" << ","
-                                                    << genTime() << ","
-                                                    << "-" << "\n";
-
-                                        peminjam.close();
-
+                                                    << book.pengarang << ","
+                                                    << book.penerbit << ","
+                                                    << book.stock << "\n";
+                                        }
+                                    } else {
                                         newBuku     << book.id << ","
                                                     << book.judul << ","
                                                     << book.pengarang << ","
                                                     << book.penerbit << ","
-                                                    << book.stock - 1 << "\n";
-
-                                        judulBuku = book.judul;
-                                    } else {
-                                        isStock = 0;
-                                        newBuku << book.id << ","
-                                                << book.judul << ","
-                                                << book.pengarang << ","
-                                                << book.penerbit << ","
-                                                << book.stock << "\n";
+                                                    << book.stock << "\n";
                                     }
-                                } else {
-                                    newBuku     << book.id << ","
-                                                << book.judul << ","
-                                                << book.pengarang << ","
-                                                << book.penerbit << ","
-                                                << book.stock << "\n";
-                                }
+                                        
+                            }
                         }
+
+                        if(isBuku == 0) {
+                            textcolor(14);
+                            cout << "\n  -|  Buku yang dipinjam tidak ditemukan \n";
+                            textcolor(15);
+                        } else {
+                            
+                            if(isStock == 0)  {
+                                textcolor(14);
+                                cout << "\n  -|  Stock 0, Buku tidak bisa dipinjam\n";
+                                textcolor(15);
+                            } else {
+                                    cout << "\n  -|  Buku ";
+
+                                    textcolor(3);
+                                    cout << judulBuku;
+                                    textcolor(15);
+
+                                    cout << " berhasil dipinjam \n";
+
+                                    newBuku.close();
+                                    buku.close();
+
+                                    remove("database/buku.csv");
+                                    rename("database/newBuku.csv", "database/buku.csv");
+                            }
+                        }
+
+                        
                     }
                 }
             }
@@ -890,36 +961,10 @@ void pinjamBuku(){
         
         if(isNIM == 0){
                 textcolor(14);
-                cout << "\n  ->  Mahasiswa tidak ditemukan \n";
+                cout << "\n  -|  Mahasiswa tidak ditemukan \n";
                 textcolor(15);
                 newBuku.close();
                 remove("newBuku.csv");
-        } else {
-            if(isBuku == 0) {
-                textcolor(14);
-                cout << "\n  ->  Buku yang dipinjam tidak ditemukan \n";
-                textcolor(15);
-            } else {
-                if(isStock == 0)  {
-                    textcolor(14);
-                    cout << "\n  ->  Stock 0, Buku tidak bisa dipinjam\n";
-                    textcolor(15);
-                } else {
-                        cout << "\n  ->  Buku ";
-
-                        textcolor(3);
-                        cout << judulBuku;
-                        textcolor(15);
-
-                        cout << " berhasil dipinjam \n";
-
-                        newBuku.close();
-                        buku.close();
-
-                        remove("database/buku.csv");
-                        rename("database/newBuku.csv", "database/buku.csv");
-                }
-            }
         }
         
 
@@ -940,6 +985,8 @@ void kembalikanBuku(){
     while(status) {
         system("cls");
 
+        removeTempData();
+
         Pinjam kembali;
         Book book;
 
@@ -949,7 +996,7 @@ void kembalikanBuku(){
         fstream buku            = connectDB("buku.csv");
         
         string lines, lines2, nim, idBuku, stock, judulBuku;
-        int isBuku = 0, isNIM = 0;
+        int isBuku = 0, isNIM = 0, isPinjam = 0;
 
         cout << "+=======================================================================+\n"
              << "|                         PENGEMBALIAN BUKU                             |\n"
@@ -982,90 +1029,102 @@ void kembalikanBuku(){
 
                 if(nim == kembali.nim) {
                     isNIM = 1;
-
-                    cout << "|  Buku yang dipinjam\t: [" << kembali.buku.id << "]-" << kembali.buku.judul << endl;
-                    cout << "+=======================================================================+\n";
                     
-                    cout << "|  Masukkan ID Buku\t: ";
-
-                    textcolor(2);
-                    cin >> idBuku;
-                    textcolor(15);
-
-                    cout << "+=======================================================================+\n";
-
-
-                    while(buku.good()) {
-                        getline(buku, lines);
-
-                        stringstream line(lines);
+                    if(kembali.status != "Dikembalikan") {
+                        isPinjam = 1;
+                        cout << "|  Buku yang dipinjam\t: [" << kembali.buku.id << "]-" << kembali.buku.judul << endl;
+                        cout << "+=======================================================================+\n";
                         
-                        getline(line, book.id, ',');
-                        getline(line, book.judul, ',');
-                        getline(line, book.pengarang, ',');
-                        getline(line, book.penerbit, ',');
-                        getline(line, stock);
+                        cout << "|  Masukkan ID Buku\t: ";
 
-                        book.stock = stoi(stock);
+                        textcolor(2);
+                        cin >> idBuku;
+                        textcolor(15);
 
-                        if(lines != "") {
-                            if(idBuku == kembali.buku.id) {
-                                isBuku = 1;
+                        cout << "+=======================================================================+\n";
 
-                                if(idBuku == book.id) {
-                                    newBuku << book.id << ","
-                                        << book.judul << ","
-                                        << book.pengarang << ","
-                                        << book.penerbit << ","
-                                        << book.stock + 1 << "\n";
+
+                        while(buku.good()) {
+                            getline(buku, lines);
+
+                            stringstream line(lines);
+                            
+                            getline(line, book.id, ',');
+                            getline(line, book.judul, ',');
+                            getline(line, book.pengarang, ',');
+                            getline(line, book.penerbit, ',');
+                            getline(line, stock);
+
+                            book.stock = stoi(stock);
+
+                            if(lines != "") {
+                                if(idBuku == kembali.buku.id) {
+                                    isBuku = 1;
+
+                                    if(idBuku == book.id) {
+                                        newBuku << book.id << ","
+                                            << book.judul << ","
+                                            << book.pengarang << ","
+                                            << book.penerbit << ","
+                                            << book.stock + 1 << "\n";
+
+                                    }else {
+                                        newBuku << book.id << ","
+                                            << book.judul << ","
+                                            << book.pengarang << ","
+                                            << book.penerbit << ","
+                                            << book.stock << "\n";
+                                    }
+
+                                    judulBuku = kembali.buku.judul;
 
                                 }else {
                                     newBuku << book.id << ","
-                                        << book.judul << ","
-                                        << book.pengarang << ","
-                                        << book.penerbit << ","
-                                        << book.stock << "\n";
+                                            << book.judul << ","
+                                            << book.pengarang << ","
+                                            << book.penerbit << ","
+                                            << book.stock << "\n";
+                                            
                                 }
-
-                                judulBuku = kembali.buku.judul;
-
-                            }else {
-                                newBuku << book.id << ","
-                                        << book.judul << ","
-                                        << book.pengarang << ","
-                                        << book.penerbit << ","
-                                        << book.stock << "\n";
-                                        
                             }
                         }
-                    }
 
-                    if(isBuku == 1) {
+                        if(isBuku == 1) {
+                            newPeminjam << kembali.nim << ","
+                                        << kembali.nama << ","
+                                        << kembali.buku.id << ","
+                                        << kembali.buku.judul << ","
+                                        << "Dikembalikan" << ","
+                                        << kembali.borrow_at << ","
+                                        << genTime() << "\n";
+                        }else {
+                            newPeminjam << kembali.nim << ","
+                                    << kembali.nama << ","
+                                    << kembali.buku.id << ","
+                                    << kembali.buku.judul << ","
+                                    << kembali.status << ","
+                                    << kembali.borrow_at << ","
+                                    << kembali.return_at << "\n";
+                        }
+                    } else {
                         newPeminjam << kembali.nim << ","
                                     << kembali.nama << ","
                                     << kembali.buku.id << ","
                                     << kembali.buku.judul << ","
-                                    << "Dikembalikan" << ","
+                                    << kembali.status << ","
                                     << kembali.borrow_at << ","
-                                    << genTime() << "\n";
-                    }else {
-                        newPeminjam << kembali.nim << ","
-                                << kembali.nama << ","
-                                << kembali.buku.id << ","
-                                << kembali.buku.judul << ","
-                                << kembali.status << ","
-                                << kembali.borrow_at << ","
-                                << kembali.return_at << "\n";
+                                    << kembali.return_at << "\n";
                     }
-                } else {
-                    newPeminjam << kembali.nim << ","
-                                << kembali.nama << ","
-                                << kembali.buku.id << ","
-                                << kembali.buku.judul << ","
-                                << kembali.status << ","
-                                << kembali.borrow_at << ","
-                                << kembali.return_at << "\n";
-                }
+                    
+                }else {
+                        newPeminjam << kembali.nim << ","
+                                    << kembali.nama << ","
+                                    << kembali.buku.id << ","
+                                    << kembali.buku.judul << ","
+                                    << kembali.status << ","
+                                    << kembali.borrow_at << ","
+                                    << kembali.return_at << "\n";
+                    }
             } 
         }
 
@@ -1074,28 +1133,39 @@ void kembalikanBuku(){
         newPeminjam.close();
         buku.close();
 
-        if(isBuku == 1) {
-            cout << "\n  ->  Buku ";
-
-            textcolor(3);
-            cout << judulBuku;
-            textcolor(15);
-
-            cout << " berhasil dikembalikan.\n";
-        }
         if(isNIM == 1) {
-            remove("database/buku.csv");
-            rename("database/newBuku.csv", "database/buku.csv");
+            
+            if(isBuku == 1) {
+                cout << "\n  -|  Buku \"";
 
-            remove("database/peminjam.csv");
-            rename("database/newPeminjam.csv", "database/peminjam.csv");
+                textcolor(3);
+                cout << judulBuku;
+                textcolor(15);
+
+                cout << "\" berhasil dikembalikan.\n";
+            }
+
+            if(isPinjam == 0) {
+                cout << "\n  Anda tidak sedang meminjam buku\n";
+            } else {
+
+                remove("database/buku.csv");
+                rename("database/newBuku.csv", "database/buku.csv");
+
+                remove("database/peminjam.csv");
+                rename("database/newPeminjam.csv", "database/peminjam.csv");
+            }
         } else {
             remove("database/newBuku.csv");
             remove("database/newPeminjam.csv");
 
-            textcolor(14);
-            cout << "\n  NIM " << nim << " tidak meminjam buku \n";
+            cout << "\n  -|  NIM \"";
+
+            textcolor(3);
+            cout << nim;
             textcolor(15);
+
+            cout << "\" tidak meminjam buku \n";
         }
         
 
@@ -1150,7 +1220,7 @@ void admin(){
             hapusBuku();
         }else if(option == "5") {
             textcolor(14);
-            cout << "\n  ->  Anda telah keluar..\n";
+            cout << "\n  -|  Anda telah keluar..\n";
             textcolor(15);
 
             Sleep(1000);
@@ -1158,7 +1228,7 @@ void admin(){
         }else {
 
             textcolor(4);
-            cout <<  "  -> Pilihan tidak valid, silahkan masukkan lagi\n";
+            cout <<  "  -| Pilihan tidak valid, silahkan masukkan lagi\n";
             textcolor(15);
 
             Sleep(500);
@@ -1199,13 +1269,13 @@ void authAdmin(){
         } else {
             Sleep(1000);
             textcolor(4);
-            cout << "  ->  Username atau Password salah! Silahkan cek ulang\n\n";
+            cout << "  -|  Username atau Password salah! Silahkan cek ulang\n\n";
             textcolor(15);
             goto relogin;
         }
 
         textcolor(14);
-        cout << "  Anda telah keluar, Apakah ingin login kembali? [y/n]: ";
+        cout << "  -|  Anda telah keluar, Apakah ingin login kembali? [y/n]: ";
         textcolor(2);
         cin >> opt;
         textcolor(15);
