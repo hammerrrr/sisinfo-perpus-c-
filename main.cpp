@@ -568,6 +568,9 @@ void editBuku(){
 
             }
 
+            data.close();
+            newData.close();
+
             if((countEdit == 1)) {
                 cout << "\n  -|  Data pada Buku dengan ID: ";
 
@@ -576,6 +579,9 @@ void editBuku(){
                 textcolor(15);
 
                 cout << " telah diubah \n\n";
+
+                remove("database/buku.csv");
+                rename("database/newBuku.csv", "database/buku.csv");
             } else {
                 cout << "\n  -|  Buku dengan ID: ";
 
@@ -584,14 +590,9 @@ void editBuku(){
                 textcolor(15);
 
                 cout << " tidak ditemukan \n\n";
+                removeTempData();
             }
 
-
-        data.close();
-        newData.close();
-
-        remove("database/buku.csv");
-        rename("database/newBuku.csv", "database/buku.csv");
 
         cout << "  Ingin melanjutkan pengeditan data? [y/n]: ";
 
@@ -666,6 +667,9 @@ void hapusBuku(){
 
             }
 
+            data.close();
+            newData.close();
+
             if((countDel == 1)) {
                 cout << "\n  -|  Buku dengan ID: ";
 
@@ -674,6 +678,11 @@ void hapusBuku(){
                 textcolor(15);
 
                 cout << " telah dihapus \n\n";
+
+                
+
+                remove("database/buku.csv");
+                rename("database/newBuku.csv", "database/buku.csv");
             } else {
                 cout << "\n  -|  Buku dengan ID: ";
 
@@ -682,14 +691,12 @@ void hapusBuku(){
                 textcolor(15);
 
                 cout << " tidak ditemukan \n\n";
+
+                removeTempData();
             }
 
 
-        data.close();
-        newData.close();
-
-        remove("database/buku.csv");
-        rename("database/newBuku.csv", "database/buku.csv");
+        
 
         cout << "  Ingin melanjutkan penghapusan data? [y/n]: ";
         cin >> opt;
@@ -964,7 +971,7 @@ void pinjamBuku(){
                 cout << "\n  -|  Mahasiswa tidak ditemukan \n";
                 textcolor(15);
                 newBuku.close();
-                remove("newBuku.csv");
+                removeTempData();
         }
         
 
@@ -1156,9 +1163,6 @@ void kembalikanBuku(){
                 rename("database/newPeminjam.csv", "database/peminjam.csv");
             }
         } else {
-            remove("database/newBuku.csv");
-            remove("database/newPeminjam.csv");
-
             cout << "\n  -|  NIM \"";
 
             textcolor(3);
@@ -1166,6 +1170,8 @@ void kembalikanBuku(){
             textcolor(15);
 
             cout << "\" tidak meminjam buku \n";
+
+            removeTempData();
         }
         
 
