@@ -68,6 +68,14 @@ int main() {
 
         status = loopInput(opt);
 
+        if(status == false ) {
+            textcolor(14);
+            cout << "\n  -|  Terimakasih telah menggunakan program kami.\n\n";
+            textcolor(15);
+            
+            Sleep(1000);
+        }
+
     }
 
     return 0;
@@ -115,11 +123,17 @@ void home(){
     }else if(opt == "6") {
         authAdmin();
     }else if(opt == "7"){
+        textcolor(14);
+        cout << "  -|  Terimakasih telah menggunakan program kami.\n\n";
+        textcolor(15);
+        
+        Sleep(1000);
+
         exit(0);
     }else if(opt == "8"){
         about();
     }else{
-        textcolor(4);
+        textcolor(14);
         cout <<  "  ->  Pilihan tidak valid, silahkan masukkan lagi\n\n";
         textcolor(15);
         Sleep(500);
@@ -193,15 +207,6 @@ void removeTempData() {
     remove("database/newPeminjam.csv");
 }
 void tampilBuku(){
-    /*
-        tampilBuku() digunakan untuk menampilkan data buku dari database.
-        1. Deklarasi data sbg ifstream
-        2. Buka database dg data.open()
-        3. check apakah data kosong atau tidak
-        4. Deklrasi dan inisialisasi var isEmptyData untuk mengecek apakah database kosong atau tidak
-        5. Jika database kosong, tampilkan "Tidak Ada Buku"
-        6. Jika data ada, tampilkan semua data
-    */
     system("cls");
 
     fstream data = connectDB("buku.csv");
@@ -250,7 +255,6 @@ void tampilBuku(){
                      << "| Stock Buku   : " << stock << endl;
             }
         }
-        Sleep(500);
         cout << "+=======================================================================+\n";
     }
 
@@ -760,7 +764,6 @@ void tampilPeminjam(){
             }
         }
         
-        Sleep(500);
         cout << "+=======================================================================+\n";
     }
 
@@ -864,102 +867,109 @@ void pinjamBuku(){
                     peminjam = connectDB("peminjam.csv");
 
                     if(isPinjam == 0) {
-                        cout << "|  Buku yang tersedia\t: \n";
+                        cout << "|  Buku yang tersedia\t: ";
 
-                        for( int i = 0; i < vecID.size(); i++ ) {
-                            cout << "|  [" << vecID[i] << "] - " << vecJudul[i] << endl;
-                        }
-                        cout << "+=======================================================================+\n";
+                        if(!vecID.empty()) {
+                            
+                            for( int i = 0; i < vecID.size(); i++ ) {
+                                cout << "\n|  " << i+1 << ". [" << vecID[i] << "] - " << vecJudul[i];
+                            }
+
+                            cout << "\n+=======================================================================+\n";
 
                         
-                        cout << "|  Masukkan ID Buku\t: ";
-                        textcolor(2);
-                        cin >> idBuku;
-                        textcolor(15);
-                        cout << "+=======================================================================+\n";
+                            cout << "|  Masukkan ID Buku\t: ";
+                            textcolor(2);
+                            cin >> idBuku;
+                            textcolor(15);
+                            cout << "+=======================================================================+\n";
 
-                        while(buku.good()) {
-                            getline(buku, lines);
+                            while(buku.good()) {
+                                getline(buku, lines);
 
-                            stringstream line(lines);
+                                stringstream line(lines);
 
-                            getline(line, book.id, ',');
-                            getline(line, book.judul, ',');
-                            getline(line, book.pengarang, ',');
-                            getline(line, book.penerbit, ',');
-                            getline(line, stock);
+                                getline(line, book.id, ',');
+                                getline(line, book.judul, ',');
+                                getline(line, book.pengarang, ',');
+                                getline(line, book.penerbit, ',');
+                                getline(line, stock);
 
-                            book.stock = stoi(stock);
+                                book.stock = stoi(stock);
 
-                            if(lines != "") {
-                                if(idBuku == book.id) {
-                                        isBuku = 1;
+                                if(lines != "") {
+                                    if(idBuku == book.id) {
+                                            isBuku = 1;
 
-                                        if(book.stock > 0) {
-                                            peminjam    << pinjam.nim << ","
-                                                        << pinjam.nama << ","
-                                                        << book.id << ","
+                                            if(book.stock > 0) {
+                                                peminjam    << pinjam.nim << ","
+                                                            << pinjam.nama << ","
+                                                            << book.id << ","
+                                                            << book.judul << ","
+                                                            << "Pinjam" << ","
+                                                            << genTime() << ","
+                                                            << "-" << "\n";
+
+                                                peminjam.close();
+
+                                                newBuku     << book.id << ","
+                                                            << book.judul << ","
+                                                            << book.pengarang << ","
+                                                            << book.penerbit << ","
+                                                            << book.stock - 1 << "\n";
+
+                                                judulBuku = book.judul;
+                                            } else {
+                                                isStock = 0;
+                                                newBuku << book.id << ","
                                                         << book.judul << ","
-                                                        << "Pinjam" << ","
-                                                        << genTime() << ","
-                                                        << "-" << "\n";
-
-                                            peminjam.close();
-
+                                                        << book.pengarang << ","
+                                                        << book.penerbit << ","
+                                                        << book.stock << "\n";
+                                            }
+                                        } else {
                                             newBuku     << book.id << ","
                                                         << book.judul << ","
                                                         << book.pengarang << ","
                                                         << book.penerbit << ","
-                                                        << book.stock - 1 << "\n";
-
-                                            judulBuku = book.judul;
-                                        } else {
-                                            isStock = 0;
-                                            newBuku << book.id << ","
-                                                    << book.judul << ","
-                                                    << book.pengarang << ","
-                                                    << book.penerbit << ","
-                                                    << book.stock << "\n";
+                                                        << book.stock << "\n";
                                         }
-                                    } else {
-                                        newBuku     << book.id << ","
-                                                    << book.judul << ","
-                                                    << book.pengarang << ","
-                                                    << book.penerbit << ","
-                                                    << book.stock << "\n";
-                                    }
-                                        
+                                            
+                                }
                             }
-                        }
 
-                        if(isBuku == 0) {
-                            textcolor(14);
-                            cout << "\n  -|  Buku yang dipinjam tidak ditemukan \n";
-                            textcolor(15);
-                        } else {
-                            
-                            if(isStock == 0)  {
+                            if(isBuku == 0) {
                                 textcolor(14);
-                                cout << "\n  -|  Stock 0, Buku tidak bisa dipinjam\n";
+                                cout << "\n  -|  Buku yang dipinjam tidak ditemukan \n";
                                 textcolor(15);
                             } else {
-                                    cout << "\n  -|  Buku ";
-
-                                    textcolor(3);
-                                    cout << judulBuku;
+                                
+                                if(isStock == 0)  {
+                                    textcolor(14);
+                                    cout << "\n  -|  Stock 0, Buku tidak bisa dipinjam\n";
                                     textcolor(15);
+                                } else {
+                                        cout << "\n  -|  Buku ";
 
-                                    cout << " berhasil dipinjam \n";
+                                        textcolor(3);
+                                        cout << judulBuku;
+                                        textcolor(15);
 
-                                    newBuku.close();
-                                    buku.close();
+                                        cout << " berhasil dipinjam \n";
 
-                                    remove("database/buku.csv");
-                                    rename("database/newBuku.csv", "database/buku.csv");
+                                        newBuku.close();
+                                        buku.close();
+
+                                        remove("database/buku.csv");
+                                        rename("database/newBuku.csv", "database/buku.csv");
+                                }
                             }
-                        }
 
-                        
+                        }else {
+                            cout << " -                                            |\n"
+                                 << "+=======================================================================+\n";
+
+                        }
                     }
                 }
             }
@@ -1264,7 +1274,7 @@ void authAdmin(){
         cin >> username;
         textcolor(15);
 
-        cout << "  Masukkan Passowrd: ";
+        cout << "  Masukkan Password: ";
         textcolor(2);
         cin >> password;
         textcolor(15);
@@ -1293,20 +1303,20 @@ void about() {
     system("cls");
     Sleep(500);
     cout << "+=====================================================================+\n"
-         << "|                          Tentang Kami                               |\n"
+         << "|                             Tentang Kami                            |\n"
          << "+=====================================================================+\n"
-         << "|                      SISINFO PERPUSTAKAAN                           |\n"
+         << "|                        SISINFO PERPUSTAKAAN                         |\n"
          << "+=====================================================================+\n"
          << "|      Anggota:                                                       |\n"
          << "+---------------------------------------------------------------------+\n"
-         << "|      1. Ivan Nur Ilham Syah                                         |\n"
-         << "|      2. Umi Solihah                                                 |\n"
-         << "|      3. Muhammad Fathur Rizqi                                       |\n"
-         << "|      4. Alma Monika Ivo                                             |\n"
-         << "|      5. Stefanus Yoseph M.A. Meak                                   |\n"
-         << "|      6. Khias Nurlatif Ari Subekti                                  |\n"
-         << "|      7. Muhammad Vicri Ariadi                                       |\n"
-         << "|      8. Cahya Laksana                                               |\n"
+         << "|      1. Ivan Nur Ilham Syah              (19.11.2742)               |\n"
+         << "|      2. Umi Solihah                      (19.11.2747)               |\n"
+         << "|      3. Muhammad Fathur Rizqi            (19.11.2757)               |\n"
+         << "|      4. Alma Monika Ivo                  (19.11.2759)               |\n"
+         << "|      5. Stefanus Yoseph M.A. Meak        (19.11.2760)               |\n"
+         << "|      6. Khias Nurlatif Ari Subekti       (19.11.2776)               |\n"
+         << "|      7. Muhammad Vicri Ariadi            (19.11.2785)               |\n"
+         << "|      8. Cahya Laksana                    (19.11.2788)               |\n"
          << "+---------------------------------------------------------------------+\n";
 
     cout << "|      SC: ";
